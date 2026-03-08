@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Library Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dashboard-specific styles */
+    .dashboard-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        padding: 2rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .dashboard-header h1 {
+        font-weight: 700;
+        margin: 0;
+        font-size: 1.75rem;
+    }
+    
+    .dashboard-header p {
+        margin: 0.5rem 0 0;
+        opacity: 0.85;
+    }
+    
+    .section-title {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .section-title i {
+        color: #3498db;
+    }
+    
+    /* Stat Card Styles */
+    .stat-card {
+        background: #fff;
+        border: none;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-card .icon-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+    }
+    
+    .stat-card .icon-wrapper.books {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: #fff;
+    }
+    
+    .stat-card .icon-wrapper.members {
+        background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+        color: #fff;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        line-height: 1;
+    }
+    
+    .stat-card .stat-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.5rem;
+    }
+    
+    /* Quick Actions */
+    .quick-action-btn {
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .quick-action-btn.btn-add-book {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        border: none;
+        color: #fff;
+    }
+    
+    .quick-action-btn.btn-add-member {
+        background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+        border: none;
+        color: #fff;
+    }
+    
+    /* Animation delays for cards */
+    .stat-card:nth-child(1) { animation-delay: 0s; }
+    .stat-card:nth-child(2) { animation-delay: 0.1s; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="dashboard-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1><i class="bi bi-speedometer2 me-2"></i>Library Dashboard</h1>
+            <p>Welcome back! Here's an overview of your library system.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="/admin/" class="btn btn-light">
+                <i class="bi bi-gear me-2"></i>Admin Panel
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- System Overview Section -->
+<h5 class="section-title">
+    <i class="bi bi-grid-3x3-gap"></i>System Overview
+</h5>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <!-- Total Books Card -->
+    <div class="col-md-6">
+        <div class="stat-card shadow-lg rounded-3 h-100">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper books me-4">
+                    <i class="bi bi-book"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="stat-value">{{ total_books }}</div>
+                    <div class="stat-label">Total Books</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Total Members Card -->
+    <div class="col-md-6">
+        <div class="stat-card shadow-lg rounded-3 h-100">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper members me-4">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="stat-value">{{ total_members }}</div>
+                    <div class="stat-label">Total Members</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Section -->
+<div class="mb-5">
+    <h5 class="section-title">
+        <i class="bi bi-lightning-charge"></i>Quick Actions
+    </h5>
+    <div class="d-flex flex-wrap gap-3">
+        <a href="{% url 'library:book_create' %}" class="quick-action-btn btn-add-book">
+            <i class="bi bi-book-plus"></i>Add Book
+        </a>
+        <a href="{% url 'library:member_create' %}" class="quick-action-btn btn-add-member">
+            <i class="bi bi-person-plus"></i>Add Member
+        </a>
+    </div>
+</div>
+
+<!-- Additional Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="stat-card shadow-lg rounded-3 h-100">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: #fff; width: 60px; height: 60px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.75rem;">
+                    <i class="bi bi-book-check"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="stat-value">{{ available_books }}</div>
+                    <div class="stat-label">Available Books</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card shadow-lg rounded-3 h-100">
+            <div class="d-flex align-items-center">
+                <div class="icon-wrapper" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: #fff; width: 60px; height: 60px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.75rem;">
+                    <i class="bi bi-bookmark-check"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="stat-value">{{ borrowed_books }}</div>
+                    <div class="stat-label">Borrowed Books</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Empty State -->
+{% if not total_books and not total_members %}
+<div class="custom-card mt-4">
+    <div class="card-body text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-journal-plus" style="font-size: 4rem; color: #3498db;"></i>
+        </div>
+        <h3 class="mb-3">Get Started</h3>
+        <p class="text-muted mb-4">Your library is empty. Start by adding books and members.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'library:book_create' %}" class="btn btn-primary-custom">
+                <i class="bi bi-plus-circle me-2"></i>Add First Book
+            </a>
+            <a href="{% url 'library:member_create' %}" class="btn btn-outline-primary">
+                <i class="bi bi-person-plus me-2"></i>Add First Member
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+

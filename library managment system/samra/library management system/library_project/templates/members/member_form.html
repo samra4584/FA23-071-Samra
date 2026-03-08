@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if member %}Edit Member{% else %}Add New Member{% endif %} - Library Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Enhanced Form Styles */
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #1abc9c;
+        box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.15);
+    }
+    
+    .input-group-text {
+        border-radius: 0.5rem 0 0 0.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-width: 45px;
+        justify-content: center;
+    }
+    
+    .input-group-text i {
+        color: #1abc9c;
+        font-size: 1.1rem;
+    }
+    
+    .input-group {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    
+    .input-group .form-control {
+        border-radius: 0 0.5rem 0.5rem 0;
+    }
+    
+    .input-group .form-control:focus {
+        box-shadow: none;
+    }
+    
+    .btn-form {
+        padding: 0.75rem 2rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-form:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-cancel {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        border: none;
+        color: #fff;
+    }
+    
+    .btn-cancel:hover {
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        background: linear-gradient(135deg, #5a6268 0%, #545b62 100%);
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+        border: none;
+        color: #fff;
+    }
+    
+    .btn-submit:hover {
+        box-shadow: 0 4px 12px rgba(26, 188, 156, 0.4);
+        background: linear-gradient(135deg, #16a085 0%, #138d75 100%);
+    }
+    
+    .required-star {
+        color: #e74c3c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-{% if member %}person-check{% else %}person-plus{% endif %} me-2"></i>
+                {% if member %}Edit Member{% else %}Add New Member{% endif %}
+            </h1>
+            <p class="mb-0 opacity-75">
+                {% if member %}Update member information{% else %}Fill in the details to add a new member{% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Member Form -->
+<div class="custom-card shadow-lg rounded-3">
+    <div class="card-body p-4">
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <div class="row g-4">
+                <!-- Name -->
+                <div class="col-md-6">
+                    <label for="name" class="form-label">
+                        Member Name <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               placeholder="Enter member name" 
+                               value="{{ member.name|default:'' }}" required>
+                    </div>
+                </div>
+                
+                <!-- Email -->
+                <div class="col-md-6">
+                    <label for="email" class="form-label">
+                        Email <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-envelope"></i>
+                        </span>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               placeholder="Enter email address" 
+                               value="{{ member.email|default:'' }}" required>
+                    </div>
+                </div>
+                
+                <!-- Phone -->
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">
+                        Phone <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-telephone"></i>
+                        </span>
+                        <input type="text" class="form-control" id="phone" name="phone" 
+                               placeholder="Enter phone number" 
+                               value="{{ member.phone|default:'' }}" required>
+                    </div>
+                </div>
+                
+                <!-- Membership Date -->
+                <div class="col-md-6">
+                    <label for="membership_date" class="form-label">
+                        Membership Date <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-calendar"></i>
+                        </span>
+                        <input type="date" class="form-control" id="membership_date" name="membership_date" 
+                               value="{{ member.membership_date|date:'Y-m-d'|default:'' }}" required>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="col-12 mt-4">
+                    <div class="d-flex gap-3 justify-content-end">
+                        <a href="{% url 'library:member_list' %}" class="btn btn-form btn-cancel">
+                            <i class="bi bi-x-circle me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-form btn-submit">
+                            <i class="bi bi-{% if member %}check-circle{% else %}plus-circle{% endif %} me-2"></i>
+                            {% if member %}Update Member{% else %}Add Member{% endif %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Form Validation Script -->
+<script>
+(function() {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}
+

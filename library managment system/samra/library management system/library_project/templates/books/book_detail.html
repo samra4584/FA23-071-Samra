@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }} - Library Management System{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="mb-2"><i class="bi bi-book me-2"></i>{{ book.title }}</h1>
+            <p class="mb-0 opacity-75">Book Details</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'library:book_list' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-arrow-left me-2"></i>Back to Books
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Book Details -->
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="custom-card">
+            <div class="card-body text-center">
+                {% if book.cover_image %}
+                <img src="{{ book.cover_image.url }}" alt="{{ book.title }}" class="img-fluid rounded mb-4" style="max-height: 300px;">
+                {% else %}
+                <div class="bg-light rounded d-flex align-items-center justify-content-center mb-4" style="height: 300px;">
+                    <i class="bi bi-book" style="font-size: 5rem; color: var(--secondary-color);"></i>
+                </div>
+                {% endif %}
+                
+                <div class="d-grid gap-2">
+                    {% if book.status == 'available' %}
+                        <button class="btn btn-primary-custom" disabled>
+                            <i class="bi bi-book-plus me-2"></i>Borrow This Book
+                        </button>
+                    {% else %}
+                        <button class="btn btn-secondary" disabled>
+                            <i class="bi bi-clock me-2"></i>Currently Unavailable
+                        </button>
+                    {% endif %}
+                    <a href="/admin/library/book/{{ book.book_id }}/change/" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit Book
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="custom-card">
+            <div class="card-header-custom">
+                <i class="bi bi-info-circle me-2"></i>Book Information
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Book ID</p>
+                        <p class="fw-medium mb-0">#{{ book.book_id }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">ISBN</p>
+                        <p class="fw-medium mb-0">{{ book.isbn|default:"Not specified" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Author</p>
+                        <p class="fw-medium mb-0">{{ book.author }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Genre</p>
+                        <p class="fw-medium mb-0">{{ book.get_genre_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Publisher</p>
+                        <p class="fw-medium mb-0">{{ book.publisher|default:"Not specified" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Publication Year</p>
+                        <p class="fw-medium mb-0">{{ book.publication_year|default:"Not specified" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Status</p>
+                        <p class="mb-0">
+                            {% if book.status == 'available' %}
+                                <span class="badge badge-status badge-available">Available</span>
+                            {% elif book.status == 'borrowed' %}
+                                <span class="badge badge-status badge-borrowed">Borrowed</span>
+                            {% elif book.status == 'reserved' %}
+                                <span class="badge badge-status badge-reserved">Reserved</span>
+                            {% else %}
+                                <span class="badge bg-danger">Lost</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Availability</p>
+                        <p class="fw-medium mb-0">{{ book.available_copies }} of {{ book.total_copies }} copies available</p>
+                    </div>
+                </div>
+                
+                {% if book.description %}
+                <hr class="my-4">
+                <p class="text-muted mb-1">Description</p>
+                <p class="mb-0">{{ book.description }}</p>
+                {% endif %}
+                
+                <hr class="my-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Added On</p>
+                        <p class="fw-medium mb-0">{{ book.created_at|date:"F d, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Last Updated</p>
+                        <p class="fw-medium mb-0">{{ book.updated_at|date:"F d, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

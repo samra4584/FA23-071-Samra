@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if book %}Edit Book{% else %}Add New Book{% endif %} - Library Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Enhanced Form Styles */
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+    }
+    
+    .input-group-text {
+        border-radius: 0.5rem 0 0 0.5rem;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-width: 45px;
+        justify-content: center;
+    }
+    
+    .input-group-text i {
+        color: #3498db;
+        font-size: 1.1rem;
+    }
+    
+    .input-group {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    
+    .input-group .form-control {
+        border-radius: 0 0.5rem 0.5rem 0;
+    }
+    
+    .input-group .form-control:focus {
+        box-shadow: none;
+    }
+    
+    .btn-form {
+        padding: 0.75rem 2rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-form:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-cancel {
+        background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        border: none;
+        color: #fff;
+    }
+    
+    .btn-cancel:hover {
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        background: linear-gradient(135deg, #5a6268 0%, #545b62 100%);
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        border: none;
+        color: #fff;
+    }
+    
+    .btn-submit:hover {
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        background: linear-gradient(135deg, #2980b9 0%, #1f6dad 100%);
+    }
+    
+    .required-star {
+        color: #e74c3c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="bi bi-{% if book %}pencil{% else %}plus-circle{% endif %} me-2"></i>
+                {% if book %}Edit Book{% else %}Add New Book{% endif %}
+            </h1>
+            <p class="mb-0 opacity-75">
+                {% if book %}Update book information{% else %}Fill in the details to add a new book{% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Book Form -->
+<div class="custom-card shadow-lg rounded-3">
+    <div class="card-body p-4">
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <div class="row g-4">
+                <!-- Title -->
+                <div class="col-md-6">
+                    <label for="title" class="form-label">
+                        Book Title <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-book"></i>
+                        </span>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               placeholder="Enter book title" 
+                               value="{{ book.title|default:'' }}" required>
+                    </div>
+                </div>
+                
+                <!-- Author -->
+                <div class="col-md-6">
+                    <label for="author" class="form-label">
+                        Author <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control" id="author" name="author" 
+                               placeholder="Enter author name" 
+                               value="{{ book.author|default:'' }}" required>
+                    </div>
+                </div>
+                
+                <!-- ISBN -->
+                <div class="col-md-6">
+                    <label for="isbn" class="form-label">
+                        ISBN <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-upc"></i>
+                        </span>
+                        <input type="text" class="form-control" id="isbn" name="isbn" 
+                               placeholder="Enter ISBN (e.g., 978-0-123456-78-9)" 
+                               value="{{ book.isbn|default:'' }}" required>
+                    </div>
+                </div>
+                
+                <!-- Published Year -->
+                <div class="col-md-6">
+                    <label for="published_year" class="form-label">
+                        Published Year <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-calendar"></i>
+                        </span>
+                        <input type="number" class="form-control" id="published_year" name="published_year" 
+                               placeholder="Enter year (e.g., 2023)" 
+                               value="{{ book.published_year|default:'' }}" 
+                               min="1000" max="2030" required>
+                    </div>
+                </div>
+                
+                <!-- Available Copies -->
+                <div class="col-md-6">
+                    <label for="available_copies" class="form-label">
+                        Available Copies <span class="required-star">*</span>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-bookmark"></i>
+                        </span>
+                        <input type="number" class="form-control" id="available_copies" name="available_copies" 
+                               placeholder="Enter number of copies" 
+                               value="{{ book.available_copies|default:'1' }}" 
+                               min="0" required>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="col-12 mt-4">
+                    <div class="d-flex gap-3 justify-content-end">
+                        <a href="{% url 'library:book_list' %}" class="btn btn-form btn-cancel">
+                            <i class="bi bi-x-circle me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-form btn-submit">
+                            <i class="bi bi-{% if book %}check-circle{% else %}plus-circle{% endif %} me-2"></i>
+                            {% if book %}Update Book{% else %}Add Book{% endif %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Form Validation Script -->
+<script>
+(function() {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function(form) {
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}
+

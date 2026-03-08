@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ member.full_name }} - Library Management System{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="mb-2"><i class="bi bi-person me-2"></i>{{ member.full_name }}</h1>
+            <p class="mb-0 opacity-75">Member Details</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'library:member_list' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-arrow-left me-2"></i>Back to Members
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Member Details -->
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="custom-card">
+            <div class="card-body text-center">
+                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 120px; height: 120px;">
+                    <i class="bi bi-person" style="font-size: 3.5rem; color: var(--secondary-color);"></i>
+                </div>
+                
+                <h4 class="mb-1">{{ member.full_name }}</h4>
+                <p class="text-muted mb-3">Member ID: #{{ member.member_id }}</p>
+                
+                {% if member.membership_type == 'standard' %}
+                    <span class="badge bg-secondary mb-3">Standard Member</span>
+                {% elif member.membership_type == 'premium' %}
+                    <span class="badge bg-primary mb-3">Premium Member</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark mb-3">VIP Member</span>
+                {% endif %}
+                
+                <div class="d-grid gap-2">
+                    {% if member.is_active %}
+                        <button class="btn btn-success" disabled>
+                            <i class="bi bi-check-circle me-2"></i>Active Member
+                        </button>
+                    {% else %}
+                        <button class="btn btn-danger" disabled>
+                            <i class="bi bi-x-circle me-2"></i>Inactive Member
+                        </button>
+                    {% endif %}
+                    <a href="/admin/library/member/{{ member.member_id }}/change/" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>Edit Member
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="custom-card mb-4">
+            <div class="card-header-custom">
+                <i class="bi bi-info-circle me-2"></i>Member Information
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Email</p>
+                        <p class="fw-medium mb-0">{{ member.email }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Phone</p>
+                        <p class="fw-medium mb-0">{{ member.phone }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Membership Type</p>
+                        <p class="fw-medium mb-0">{{ member.get_membership_type_display }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Status</p>
+                        <p class="mb-0">
+                            {% if member.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Membership Start Date</p>
+                        <p class="fw-medium mb-0">{{ member.membership_start_date|date:"F d, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-1">Membership Expiry Date</p>
+                        <p class="fw-medium mb-0">{{ member.membership_expiry_date|date:"F d, Y"|default:"No expiry" }}</p>
+                    </div>
+                </div>
+                
+                {% if member.address %}
+                <hr class="my-4">
+                <p class="text-muted mb-1">Address</p>
+                <p class="mb-0">{{ member.address }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Borrowing History -->
+        <div class="custom-card">
+            <div class="card-header-custom">
+                <i class="bi bi-clock-history me-2"></i>Recent Borrowing History
+            </div>
+            <div class="card-body p-0">
+                {% if issues %}
+                <div class="table-responsive">
+                    <table class="table table-custom mb-0">
+                        <thead>
+                            <tr>
+                                <th>Book</th>
+                                <th>Issue Date</th>
+                                <th>Due Date</th>
+                                <th>Return Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for issue in issues %}
+                            <tr>
+                                <td>{{ issue.book.title }}</td>
+                                <td>{{ issue.issue_date|date:"M d, Y" }}</td>
+                                <td>{{ issue.due_date|date:"M d, Y" }}</td>
+                                <td>{{ issue.return_date|date:"M d, Y"|default:"-" }}</td>
+                                <td>
+                                    {% if issue.status == 'issued' %}
+                                        <span class="badge bg-primary">Issued</span>
+                                    {% elif issue.status == 'returned' %}
+                                        <span class="badge bg-success">Returned</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Overdue</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-journal-x" style="font-size: 3rem; color: var(--secondary-color);"></i>
+                    <p class="mt-2 text-muted">No borrowing history yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
