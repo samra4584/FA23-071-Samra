@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration CRUD</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input { margin-bottom: 10px; padding: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h2>User Registration</h2>
+    <form id="userForm" action="/save" method="POST">
+        <input type="hidden" id="userId" name="id">
+        <input type="text" id="userName" name="name" placeholder="Full Name" required><br>
+        <input type="text" id="userPhone" name="phone" placeholder="Phone Number" required><br>
+        <button type="submit" id="submitBtn">Register User</button>
+        <button type="button" id="cancelBtn" onclick="cancelEdit()" style="display:none;">Cancel</button>
+    </form>
+
+    <hr>
+    <h3>Registered Users</h3>
+    <div id="userList">Loading...</div>
+
+    <script>
+        // Data load karne ka function
+        function loadUsers() {
+            fetch('/data')
+                .then(res => res.json())
+                .then(data => {
+                    let html = '<table><tr><th>ID</th><th>Name</th><th>Phone</th><th>Action</th></tr>';
+                    data.forEach(user => {
+                        html += `<tr>
+                            <td>${user.id}</td>
+                            <td>${user.name}</td>
+                            <td>${user.phone}</td>
+                            <td>
+                                <button type="button" onclick="editUser(${user.id}, '${user.name}', '${user.phone}')" style="color:blue;">Edit</button>
+                                <form action="/delete" method="POST" style="display:inline;">
+                                    <input type="hidden" name="id" value="${user.id}">
+                                    <button type="submit" style="color:red;">Delete</button>
+                                </form>
+                            </td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    document.getElementById('userList').innerHTML = html;
+                });
+        }
+
+        // Edit user function
+        function editUser(id, name, phone) {
+            document.getElementById('userId').value = id;
+            document.getElementById('userName').value = name;
+            document.getElementById('userPhone').value = phone;
+            document.getElementById('userForm').action = '/update';
+            document.getElementById('submitBtn').textContent = 'Update User';
+            document.getElementById('cancelBtn').style.display = 'inline';
+        }
+
+        // Cancel edit function
+        function cancelEdit() {
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('userForm').action = '/save';
+            document.getElementById('submitBtn').textContent = 'Register User';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        // Form submission
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            // Form will auto-submit to /save or /update based on action
+        });
+
+        // Initial load
+        loadUsers();
+    </script>
+</body>
+</html>

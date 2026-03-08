@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Registration CRUD</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        form { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; width: 300px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h2>User Registration Form</h2>
+    <form id="userForm">
+        <input type="hidden" id="userId">
+        <input type="text" id="name" placeholder="Name" required><br><br>
+        <input type="email" id="email" placeholder="Email" required><br><br>
+        <input type="number" id="age" placeholder="Age"><br><br>
+        <button type="submit" id="submitBtn">Register User</button>
+    </form>
+
+    <h3>Registered Users</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th><th>Email</th><th>Age</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById('userForm');
+        const userTableBody = document.getElementById('userTableBody');
+
+        // Data Fetch Karne ke liye
+        async function fetchUsers() {
+            const res = await fetch('/users');
+            const users = await res.json();
+            userTableBody.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.age}</td>
+                    <td>
+                        <button onclick="editUser('${user._id}', '${user.name}', '${user.email}', ${user.age})">Edit</button>
+                        <button onclick="deleteUser('${user._id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Create aur Update ke liye
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('userId').value;
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                age: document.getElementById('age').value
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/users/update/${id}` : '/users/add';
+
+            await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            form.reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('submitBtn').innerText = 'Register User';
+            fetchUsers();
+        };
+
+        async function deleteUser(id) {
+            await fetch(`/users/delete/${id}`, { method: 'DELETE' });
+            fetchUsers();
+        }
+
+        function editUser(id, name, email, age) {
+            document.getElementById('userId').value = id;
+            document.getElementById('name').value = name;
+            document.getElementById('email').value = email;
+            document.getElementById('age').value = age;
+            document.getElementById('submitBtn').innerText = 'Update User';
+        }
+
+        fetchUsers();
+    </script>
+</body>
+</html>
