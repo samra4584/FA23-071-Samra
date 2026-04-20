@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login - Elite Sparkle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            background: rgba(255,255,255,0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #d4af37;
+            width: 400px;
+        }
+        .login-container h1 { text-align: center; color: #d4af37; margin-bottom: 10px; }
+        .login-container p { text-align: center; color: #ccc; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #d4af37; }
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #d4af37;
+            border-radius: 8px;
+            color: white;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #d4af37;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .flash { padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; }
+        .flash.success { background: #28a745; color: white; }
+        .flash.error { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>ELITE SPARKLE</h1>
+        <p>Admin Login</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <div class="form-group"><label>Username</label><input type="text" name="username" required placeholder="Qasim1204"></div>
+            <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>

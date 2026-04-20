@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Users - Elite Sparkle Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .admin-header { background: #1a1a1a; padding: 20px; border-bottom: 1px solid #d4af37; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
+        .section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 30px; overflow-x: auto; }
+        .section h2 { color: #d4af37; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(212,175,55,0.3); vertical-align: middle; }
+        th { background: #d4af37; color: #0a0a0a; }
+        .btn { padding: 5px 15px; background: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 5px; display: inline-block; margin: 2px; border: none; cursor: pointer; font-size: 12px; transition: all 0.2s; }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: #0a0a0a; }
+        .btn-small { padding: 3px 10px; font-size: 11px; }
+        .btn-info { background: #17a2b8; color: white; }
+        .export-btn { background: #28a745; margin-bottom: 15px; display: inline-block; }
+        .no-data { text-align: center; padding: 40px; color: #888; }
+        .action-buttons { display: flex; gap: 5px; flex-wrap: wrap; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; }
+        .badge.orders { background: #17a2b8; }
+        .badge.no-orders { background: #6c757d; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-box input { flex: 1; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #d4af37; border-radius: 8px; color: white; min-width: 250px; }
+        .search-box input:focus { outline: none; border-color: #f9e07e; }
+        .stats-summary { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stat-badge { background: rgba(212,175,55,0.15); padding: 8px 15px; border-radius: 20px; }
+        @media (max-width: 768px) { .container { padding: 10px; } th, td { font-size: 11px; padding: 6px; } }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>👥 User Management - Elite Sparkle</h1>
+        <div>
+            <a href="/admin/dashboard" style="color: #d4af37;">← Back to Dashboard</a> | 
+            <a href="/admin/logout" style="color: #dc3545;">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
+                <h2>📋 All Registered Users</h2>
+                <a href="/admin/export_users_excel" class="btn export-btn">📊 Export to Excel (CSV)</a>
+            </div>
+            
+            <!-- Search Box -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search by name, email, or phone..." onkeyup="searchUsers()">
+                <button class="btn" onclick="clearSearch()">Clear</button>
+            </div>
+            
+            <!-- Stats Summary -->
+            <div class="stats-summary">
+                <div class="stat-badge">📊 Total Users: <strong>{{ users|length }}</strong></div>
+                <div class="stat-badge">👥 With Orders: <strong>{{ users|selectattr('id', 'in', orders|map(attribute='user_id')|list)|list|length }}</strong></div>
+                <div class="stat-badge">🆕 New This Month: <strong>{{ users|selectattr('created_at', '>=', 'now|replace("-", "-")[:7]')|list|length }}</strong></div>
+            </div>
+            
+            {% if users and users|length > 0 %}
+            <div style="overflow-x: auto;">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Registration Date</th>
+                            <th>Orders</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        {% set order_count = namespace(value=0) %}
+                        {% for order in orders %}
+                            {% if order.user_id == user.id %}
+                                {% set order_count.value = order_count.value + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        <tr>
+                            <td data-label="ID">{{ user.id }}</td>
+                            <td data-label="Name"><strong>{{ user.first_name }} {{ user.last_name }}</strong></td>
+                            <td data-label="Email">{{ user.email }}</td>
+                            <td data-label="Phone">{{ user.phone }}</td>
+                            <td data-label="Joined">{{ user.created_at[:10] if user.created_at else 'N/A' }}</td>
+                            <td data-label="Orders">
+                                {% if order_count.value > 0 %}
+                                    <span class="badge orders">{{ order_count.value }} orders</span>
+                                {% else %}
+                                    <span class="badge no-orders">0 orders</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Actions" class="action-buttons">
+                                <a href="/admin/edit_user/{{ user.id }}" class="btn btn-small">✏️ Edit</a>
+                                <a href="/admin/user_orders/{{ user.id }}" class="btn btn-small btn-info">📦 View Orders</a>
+                                {% if order_count.value > 0 %}
+                                    <a href="/admin/delete_user_force/{{ user.id }}" class="btn-danger btn-small" onclick="return confirm('⚠️ WARNING: User has {{ order_count.value }} order(s). Deleting will also delete ALL their orders! This cannot be undone. Continue?')">🗑️ Force Delete</a>
+                                {% else %}
+                                    <a href="/admin/delete_user/{{ user.id }}" class="btn-danger btn-small" onclick="return confirm('Delete user {{ user.first_name }} {{ user.last_name }}?')">🗑️ Delete</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 15px; color: #888; font-size: 12px; text-align: center;">
+                📌 Total Users: {{ users|length }} | 
+                💡 Tip: Click "View Orders" to see complete order history for any user
+            </p>
+            {% else %}
+            <div class="no-data">
+                <h3>📭 No users registered yet</h3>
+                <p>Users will appear here after they create an account.</p>
+                <a href="/register" style="color: #d4af37;">→ Register a test account</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        function searchUsers() {
+            let input = document.getElementById('searchInput');
+            let filter = input.value.toLowerCase();
+            let table = document.getElementById('usersTable');
+            let rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                let row = rows[i];
+                let nameCell = row.getElementsByTagName('td')[1];
+                let emailCell = row.getElementsByTagName('td')[2];
+                let phoneCell = row.getElementsByTagName('td')[3];
+                
+                if (nameCell || emailCell || phoneCell) {
+                    let nameText = nameCell ? nameCell.textContent.toLowerCase() : '';
+                    let emailText = emailCell ? emailCell.textContent.toLowerCase() : '';
+                    let phoneText = phoneCell ? phoneCell.textContent.toLowerCase() : '';
+                    
+                    if (nameText.includes(filter) || emailText.includes(filter) || phoneText.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+        }
+        
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchUsers();
+        }
+    </script>
+</body>
+</html>

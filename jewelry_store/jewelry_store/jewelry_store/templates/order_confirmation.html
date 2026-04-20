@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmation - Elite Sparkle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .confirmation-container {
+            background: rgba(255,255,255,0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid #d4af37;
+            text-align: center;
+            max-width: 600px;
+            margin: 20px;
+        }
+        .checkmark {
+            font-size: 80px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        h1 { color: #d4af37; margin-bottom: 20px; }
+        .order-number {
+            background: rgba(212,175,55,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #d4af37;
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 40px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="checkmark">✓</div>
+        <h1>Order Placed Successfully!</h1>
+        <p>Thank you for shopping at Elite Sparkle</p>
+        <div class="order-number">
+            <strong>Order Number:</strong> {{ order.order_number }}
+        </div>
+        <p>We have sent a confirmation to your email.</p>
+        <p>You will receive tracking updates shortly.</p>
+        <a href="/" class="btn">Continue Shopping</a>
+        <a href="/my_orders" class="btn" style="background: transparent; color: #d4af37; margin-left: 10px;">View My Orders</a>
+    </div>
+</body>
+</html>

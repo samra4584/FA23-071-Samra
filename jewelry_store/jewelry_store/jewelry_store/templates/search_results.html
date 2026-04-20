@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results - Elite Sparkle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .header { background: rgba(10,10,10,0.95); padding: 20px; border-bottom: 1px solid #d4af37; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; }
+        .product-card { background: rgba(255,255,255,0.05); border-radius: 12px; overflow: hidden; transition: all 0.3s; border: 1px solid rgba(212,175,55,0.2); cursor: pointer; }
+        .product-card:hover { transform: translateY(-5px); border-color: #d4af37; }
+        .product-image { height: 220px; background: #1a1a1a; overflow: hidden; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .product-card:hover .product-image img { transform: scale(1.05); }
+        .product-info { padding: 15px; }
+        .product-name { font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+        .product-price { font-size: 18px; color: #d4af37; font-weight: bold; }
+        .rating { color: #d4af37; font-size: 12px; margin: 5px 0; }
+        .view-btn { display: inline-block; padding: 6px 15px; background: transparent; color: #d4af37; text-decoration: none; border-radius: 25px; border: 1px solid #d4af37; margin-top: 10px; font-size: 12px; }
+        .search-header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        .search-header h1 { color: #d4af37; margin-bottom: 10px; }
+        .no-results { text-align: center; padding: 60px; background: rgba(255,255,255,0.05); border-radius: 15px; }
+        .back-link { display: inline-block; margin-top: 30px; color: #d4af37; text-decoration: none; }
+        @media (max-width: 768px) { .product-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <a href="/" style="color: #d4af37; text-decoration: none;">← Back to Store</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="search-header">
+            <h1>🔍 Search Results for "{{ query }}"</h1>
+            <p>Found {{ products|length }} product(s)</p>
+        </div>
+        
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card" onclick="location.href='/product/{{ product.id }}'">
+                <div class="product-image">
+                    {% if product.display_image %}
+                        <img src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300" alt="{{ product.name }}">
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="rating">
+                        {% if product.avg_rating > 0 %}
+                            {% for i in range(1, 6) %}
+                                {% if i <= product.avg_rating|round %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                            ({{ product.review_count }})
+                        {% else %}
+                            No reviews yet
+                        {% endif %}
+                    </div>
+                    <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                    <a href="/product/{{ product.id }}" class="view-btn">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-results">
+            <h2>😔 No products found</h2>
+            <p>We couldn't find any products matching "{{ query }}"</p>
+            <p>Try searching with different keywords or browse our categories.</p>
+            <a href="/" class="view-btn" style="margin-top: 20px; display: inline-block;">Continue Shopping</a>
+        </div>
+        {% endif %}
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

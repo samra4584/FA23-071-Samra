@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Site Settings - Elite Sparkle Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .admin-header { background: #1a1a1a; padding: 20px; border-bottom: 1px solid #d4af37; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 30px; margin-bottom: 30px; border: 1px solid #d4af37; }
+        .card h2 { color: #d4af37; margin-bottom: 20px; }
+        .preview { margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; text-align: center; }
+        .preview img { max-width: 100%; max-height: 200px; border-radius: 10px; }
+        .preview-logo img { max-height: 80px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #d4af37; font-weight: bold; }
+        input[type="file"] { width: 100%; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid #d4af37; border-radius: 8px; color: white; }
+        .btn { padding: 10px 25px; background: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 8px; display: inline-block; margin-right: 10px; border: none; cursor: pointer; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-info { background: #17a2b8; color: white; }
+        .note { font-size: 12px; color: #888; margin-top: 5px; }
+        .divider { height: 1px; background: rgba(212,175,55,0.3); margin: 20px 0; }
+        .flash { padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; }
+        .flash.success { background: #28a745; color: white; }
+        .flash.error { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>🎨 Site Settings - Logo & Cover Photo</h1>
+        <div>
+            <a href="/admin/dashboard" style="color: #d4af37;">← Back to Dashboard</a> | 
+            <a href="/admin/logout" style="color: #dc3545;">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+        
+        <!-- Logo Section -->
+        <div class="card">
+            <h2>🏷️ Store Logo</h2>
+            <p>Upload your store logo. It will appear in the header.</p>
+            
+            {% if logo %}
+            <div class="preview preview-logo">
+                <img src="{{ url_for('static', filename='uploads/' + logo) }}" alt="Current Logo">
+                <p style="margin-top: 10px;">Current Logo</p>
+            </div>
+            <div style="margin-top: 15px;">
+                <a href="/admin/remove_logo" class="btn btn-danger" onclick="return confirm('Remove logo?')">🗑️ Remove Logo</a>
+            </div>
+            {% else %}
+            <div class="preview preview-logo" style="background: rgba(0,0,0,0.3);">
+                <p style="color: #888;">No logo uploaded yet</p>
+            </div>
+            {% endif %}
+            
+            <div class="divider"></div>
+            
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Upload New Logo</label>
+                    <input type="file" name="logo" accept="image/*">
+                    <div class="note">Recommended size: 200x80px. Formats: PNG, JPG, JPEG, GIF, WEBP</div>
+                </div>
+                <button type="submit" class="btn btn-success">📤 Upload Logo</button>
+            </form>
+        </div>
+        
+        <!-- Cover Photo Section -->
+        <div class="card">
+            <h2>🖼️ Homepage Cover Photo</h2>
+            <p>Upload a cover photo for your homepage hero section.</p>
+            
+            {% if cover_photo %}
+            <div class="preview">
+                <img src="{{ url_for('static', filename='uploads/' + cover_photo) }}" alt="Current Cover Photo">
+                <p style="margin-top: 10px;">Current Cover Photo</p>
+            </div>
+            <div style="margin-top: 15px;">
+                <a href="/admin/remove_cover" class="btn btn-danger" onclick="return confirm('Remove cover photo?')">🗑️ Remove Cover Photo</a>
+            </div>
+            {% else %}
+            <div class="preview" style="background: rgba(0,0,0,0.3);">
+                <p style="color: #888;">No cover photo uploaded yet (using default image)</p>
+            </div>
+            {% endif %}
+            
+            <div class="divider"></div>
+            
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Upload New Cover Photo</label>
+                    <input type="file" name="cover_photo" accept="image/*">
+                    <div class="note">Recommended size: 1920x600px. Formats: PNG, JPG, JPEG, WEBP</div>
+                </div>
+                <button type="submit" class="btn btn-success">📤 Upload Cover Photo</button>
+            </form>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="/admin/dashboard" class="btn btn-info">← Back to Dashboard</a>
+            <a href="/" class="btn" target="_blank">👁️ View Store</a>
+        </div>
+    </div>
+</body>
+</html>

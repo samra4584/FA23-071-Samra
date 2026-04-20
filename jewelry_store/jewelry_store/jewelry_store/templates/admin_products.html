@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Products Management - Elite Sparkle Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .admin-wrapper { display: flex; min-height: 100vh; }
+        .side-panel { width: 280px; background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%); border-right: 1px solid #d4af37; position: fixed; height: 100vh; overflow-y: auto; }
+        .side-panel-header { padding: 25px 20px; border-bottom: 1px solid #d4af37; text-align: center; }
+        .side-panel-header h2 { color: #d4af37; }
+        .side-menu { padding: 20px 0; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #fff; text-decoration: none; transition: all 0.3s; border-left: 3px solid transparent; }
+        .menu-item:hover { background: rgba(212,175,55,0.1); border-left-color: #d4af37; }
+        .menu-item.active { background: rgba(212,175,55,0.15); border-left-color: #d4af37; color: #d4af37; }
+        .submenu { padding-left: 45px; }
+        .submenu-item { display: block; padding: 8px 15px; color: #ccc; text-decoration: none; font-size: 13px; }
+        .submenu-item:hover { color: #d4af37; }
+        .main-content { flex: 1; margin-left: 280px; padding: 20px; }
+        .admin-header { background: #1a1a1a; padding: 15px 25px; border-bottom: 1px solid #d4af37; display: flex; justify-content: space-between; margin-bottom: 20px; border-radius: 10px; }
+        .filter-buttons { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 20px; background: rgba(255,255,255,0.1); border: 1px solid #d4af37; border-radius: 30px; color: white; text-decoration: none; font-size: 13px; transition: all 0.3s; }
+        .filter-btn:hover, .filter-btn.active { background: #d4af37; color: #0a0a0a; }
+        .category-section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .category-title { color: #d4af37; font-size: 22px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.3); display: flex; justify-content: space-between; align-items: center; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
+        .product-card { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 15px; border: 1px solid rgba(212,175,55,0.2); transition: all 0.3s; }
+        .product-card:hover { transform: translateY(-3px); border-color: #d4af37; }
+        .product-image { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; background: #1a1a1a; }
+        .product-name { font-weight: bold; margin-bottom: 5px; }
+        .product-price { color: #d4af37; font-weight: bold; }
+        .product-category { font-size: 11px; color: #888; margin-bottom: 8px; }
+        .btn { padding: 3px 10px; background: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 5px; font-size: 11px; display: inline-block; margin: 2px; }
+        .btn-danger { background: #dc3545; color: white; }
+        .no-products { text-align: center; padding: 30px; color: #888; }
+        .add-btn { background: #28a745; padding: 8px 20px; display: inline-block; }
+        @media (max-width: 768px) { .side-panel { width: 70px; } .side-panel-header h2, .menu-item span:last-child { display: none; } .main-content { margin-left: 70px; } .product-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <div class="side-panel">
+            <div class="side-panel-header"><h2>✨ Elite Sparkle</h2></div>
+            <div class="side-menu">
+                <a href="/admin/dashboard" class="menu-item"><span>📊</span><span>Dashboard</span></a>
+                <div class="menu-item active"><span>🛍️</span><span>Products Management</span></div>
+                <div class="submenu">
+                    <a href="/admin/products" class="submenu-item">📦 All Products</a>
+                    <a href="/admin/add" class="submenu-item">➕ Add New Product</a>
+                    <a href="/admin/products?category=rings" class="submenu-item">💍 Rings</a>
+                    <a href="/admin/products?category=necklaces" class="submenu-item">📿 Necklaces</a>
+                    <a href="/admin/products?category=earrings" class="submenu-item">✨ Earrings</a>
+                    <a href="/admin/products?category=bracelets" class="submenu-item">🔗 Bracelets</a>
+                    <a href="/admin/products?category=watches" class="submenu-item">🕐 Watches</a>
+                    <a href="/admin/products?category=sets" class="submenu-item">👑 Jewelry Sets</a>
+                </div>
+                <a href="/admin/orders" class="menu-item"><span>📦</span><span>Orders</span></a>
+                <a href="/admin/users" class="menu-item"><span>👥</span><span>Users</span></a>
+                <a href="/admin/reviews" class="menu-item"><span>⭐</span><span>Reviews</span></a>
+                <a href="/admin/notifications" class="menu-item"><span>🔔</span><span>Notifications</span></a>
+                <a href="/" class="menu-item"><span>🏠</span><span>View Store</span></a>
+                <a href="/admin/logout" class="menu-item"><span>🚪</span><span>Logout</span></a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="admin-header">
+                <h1>🛍️ Products Management</h1>
+                <a href="/admin/add" class="btn add-btn">+ Add New Product</a>
+            </div>
+            
+            <!-- Category Filter Buttons -->
+            <div class="filter-buttons">
+                <a href="/admin/products" class="filter-btn {% if current_category == 'all' %}active{% endif %}">📦 All Products</a>
+                <a href="/admin/products?category=rings" class="filter-btn {% if current_category == 'rings' %}active{% endif %}">💍 Rings</a>
+                <a href="/admin/products?category=necklaces" class="filter-btn {% if current_category == 'necklaces' %}active{% endif %}">📿 Necklaces</a>
+                <a href="/admin/products?category=earrings" class="filter-btn {% if current_category == 'earrings' %}active{% endif %}">✨ Earrings</a>
+                <a href="/admin/products?category=bracelets" class="filter-btn {% if current_category == 'bracelets' %}active{% endif %}">🔗 Bracelets</a>
+                <a href="/admin/products?category=watches" class="filter-btn {% if current_category == 'watches' %}active{% endif %}">🕐 Watches</a>
+                <a href="/admin/products?category=sets" class="filter-btn {% if current_category == 'sets' %}active{% endif %}">👑 Jewelry Sets</a>
+            </div>
+            
+            {% for category in categories %}
+                {% if products_by_category[category] and products_by_category[category]|length > 0 %}
+                <div class="category-section">
+                    <div class="category-title">
+                        <span>
+                            {% if category == 'rings' %}💍 Rings
+                            {% elif category == 'necklaces' %}📿 Necklaces
+                            {% elif category == 'earrings' %}✨ Earrings
+                            {% elif category == 'bracelets' %}🔗 Bracelets
+                            {% elif category == 'watches' %}🕐 Watches
+                            {% elif category == 'pendants' %}💎 Pendants
+                            {% elif category == 'sets' %}👑 Jewelry Sets
+                            {% else %}{{ category|capitalize }}
+                            {% endif %}
+                        </span>
+                        <span>{{ products_by_category[category]|length }} products</span>
+                    </div>
+                    <div class="product-grid">
+                        {% for product in products_by_category[category] %}
+                        <div class="product-card">
+                            {% if product.display_image %}
+                                <img class="product-image" src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                            {% else %}
+                                <img class="product-image" src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=200" alt="{{ product.name }}">
+                            {% endif %}
+                            <div class="product-name">{{ product.name[:35] }}{% if product.name|length > 35 %}...{% endif %}</div>
+                            <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                            <div class="product-category">
+                                {% if product.category == 'rings' %}💍 Rings
+                                {% elif product.category == 'necklaces' %}📿 Necklaces
+                                {% elif product.category == 'earrings' %}✨ Earrings
+                                {% elif product.category == 'bracelets' %}🔗 Bracelets
+                                {% elif product.category == 'watches' %}🕐 Watches
+                                {% elif product.category == 'sets' %}👑 Sets
+                                {% else %}{{ product.category }}{% endif %}
+                            </div>
+                            <div>
+                                <a href="/admin/edit/{{ product.id }}" class="btn">✏️ Edit</a>
+                                <a href="/admin/delete/{{ product.id }}" class="btn btn-danger" onclick="return confirm('Delete this product?')">🗑️ Delete</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            
+            {% if current_category != 'all' and products_by_category[current_category]|length == 0 %}
+            <div class="no-products">
+                <p>📭 No products found in this category.</p>
+                <a href="/admin/add" class="btn add-btn" style="margin-top: 15px;">+ Add New Product</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

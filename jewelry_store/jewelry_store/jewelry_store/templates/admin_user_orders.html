@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Orders - Elite Sparkle Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .admin-header { background: #1a1a1a; padding: 20px; border-bottom: 1px solid #d4af37; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .user-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 25px; margin-bottom: 30px; border: 1px solid #d4af37; }
+        .user-card h2 { color: #d4af37; margin-bottom: 15px; }
+        .user-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .user-info p { padding: 8px 0; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px; overflow-x: auto; }
+        .section h3 { color: #d4af37; margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        th { background: #d4af37; color: #0a0a0a; }
+        .btn { padding: 5px 15px; background: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 5px; display: inline-block; margin: 2px; font-size: 12px; }
+        .btn-danger { background: #dc3545; color: white; }
+        .status { padding: 3px 8px; border-radius: 20px; font-size: 11px; }
+        .status.pending { background: #ffc107; color: #0a0a0a; }
+        .status.shipped { background: #17a2b8; color: white; }
+        .status.delivered { background: #28a745; color: white; }
+        .status.cancelled { background: #dc3545; color: white; }
+        .no-orders { text-align: center; padding: 40px; color: #888; }
+        .back-link { display: inline-block; margin-top: 20px; color: #d4af37; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>👤 User Orders - {{ user.first_name }} {{ user.last_name }}</h1>
+        <div><a href="/admin/users" style="color: #d4af37;">← Back to Users</a> | <a href="/admin/logout" style="color: #dc3545;">Logout</a></div>
+    </div>
+    <div class="container">
+        <div class="user-card">
+            <h2>📋 User Information</h2>
+            <div class="user-info">
+                <p><strong>User ID:</strong> {{ user.id }}</p>
+                <p><strong>Full Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Phone:</strong> {{ user.phone }}</p>
+                <p><strong>Registered:</strong> {{ user.created_at[:19] if user.created_at else 'N/A' }}</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>📦 Order History ({{ orders|length }} orders)</h3>
+            {% if orders %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Payment</th>
+                        <th>Payment Status</th>
+                        <th>Order Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.order_number }}</td>
+                        <td>{{ order.created_at[:10] }}</td>
+                        <td>₨ {{ "%.2f"|format(order.total_amount) }}</td>
+                        <td>{{ order.payment_method|capitalize }}</td>
+                        <td>
+                            {% if order.payment_method == 'cod' %}
+                                Cash on Delivery
+                            {% elif order.payment_status == 'confirmed' %}
+                                ✅ Confirmed
+                            {% else %}
+                                ⏳ Pending
+                            {% endif %}
+                        </td>
+                        <td><span class="status {{ order.status }}">{{ order.status|capitalize }}</span></td>
+                        <td>
+                            <a href="/admin/view_order/{{ order.id }}" class="btn">View</a>
+                            {% if order.status == 'delivered' %}
+                                <a href="/admin/delete_order/{{ order.id }}" class="btn btn-danger" onclick="return confirm('Delete this order?')">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-orders">
+                <p>No orders found for this user.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="/admin/users" class="back-link">← Back to Users List</a>
+            <a href="/admin/edit_user/{{ user.id }}" class="back-link" style="margin-left: 20px;">✏️ Edit User</a>
+        </div>
+    </div>
+</body>
+</html>

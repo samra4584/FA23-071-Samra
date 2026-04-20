@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Sparkle - Luxury Jewelry Pakistan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: #ffffff; overflow-x: hidden; }
+        
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .header { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); position: sticky; top: 0; z-index: 1000; padding: 15px 0; border-bottom: 2px solid #d4af37; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo-circle { width: 70px; height: 70px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #d4af37, #ffd700); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(212,175,55,0.3); transition: transform 0.3s; }
+        .logo-circle:hover { transform: scale(1.05); }
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-text h1 { font-size: 32px; background: linear-gradient(135deg, #d4af37, #ffd700, #fff8e7); background-size: 200% 200%; -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: 2px; animation: shimmer 3s ease infinite; }
+        .logo-text p { font-size: 11px; color: #d4af37; letter-spacing: 4px; margin-top: 5px; }
+        
+        /* Navigation with Yellow Login/Register */
+        .nav { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+        .nav a { color: #ffffff; text-decoration: none; padding: 8px 15px; margin: 0 2px; border: 1.5px solid #d4af37; border-radius: 30px; transition: all 0.3s; font-weight: 500; font-size: 13px; background: transparent; }
+        .nav a:hover { background: #d4af37; color: #0a0a0a; transform: translateY(-2px); }
+        .cart-icon { background: rgba(212,175,55,0.15); }
+        
+        /* Yellow Login/Register Buttons */
+        .login-btn, .register-btn {
+            background: #d4af37 !important;
+            color: #0a0a0a !important;
+            font-weight: bold !important;
+        }
+        .login-btn:hover, .register-btn:hover {
+            background: #ffd700 !important;
+            transform: translateY(-2px);
+        }
+        
+        /* Search Bar */
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+        }
+        .search-form {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 40px;
+            border: 1px solid #d4af37;
+            overflow: hidden;
+        }
+        .search-form input {
+            padding: 8px 15px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 14px;
+            width: 200px;
+            outline: none;
+        }
+        .search-form input::placeholder {
+            color: #aaa;
+        }
+        .search-form button {
+            padding: 8px 15px;
+            background: #d4af37;
+            border: none;
+            color: #0a0a0a;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .search-form button:hover {
+            background: #ffd700;
+        }
+        
+        .profile-dropdown { position: relative; display: inline-block; }
+        .profile-trigger { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 5px 15px; border: 1.5px solid #d4af37; border-radius: 40px; background: transparent; transition: all 0.3s; }
+        .profile-trigger:hover { background: rgba(212,175,55,0.15); }
+        .profile-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #ffd700); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #0a0a0a; font-size: 14px; }
+        .profile-name { color: #d4af37; font-weight: bold; font-size: 13px; }
+        .dropdown-arrow { color: #d4af37; font-size: 10px; }
+        .dropdown-menu { position: absolute; top: 50px; right: 0; width: 260px; background: #1a1a2e; border-radius: 12px; border: 1px solid #d4af37; box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s; z-index: 1000; }
+        .profile-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-header { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        .dropdown-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #ffd700); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: #0a0a0a; }
+        .dropdown-info strong { color: #d4af37; font-size: 14px; }
+        .dropdown-info small { color: #888; font-size: 11px; }
+        .dropdown-divider { height: 1px; background: rgba(212,175,55,0.3); margin: 5px 0; }
+        .dropdown-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: white; text-decoration: none; transition: all 0.2s; font-size: 14px; }
+        .dropdown-item:hover { background: rgba(212,175,55,0.1); color: #d4af37; }
+        .dropdown-item.logout { color: #ff6b6b; }
+        
+        .hero { height: 500px; display: flex; align-items: center; text-align: center; background-size: cover; background-position: center; background-attachment: fixed; }
+        .hero-content h1 { font-size: 56px; margin-bottom: 20px; background: linear-gradient(135deg, #d4af37, #ffd700); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .hero-content p { font-size: 24px; margin-bottom: 30px; color: #ffd700; }
+        .btn { display: inline-block; padding: 12px 35px; background: transparent; color: #d4af37; text-decoration: none; border-radius: 40px; font-weight: bold; font-size: 16px; border: 2px solid #d4af37; transition: all 0.3s; cursor: pointer; }
+        .btn:hover { background: #d4af37; color: #0a0a0a; transform: translateY(-3px); }
+        
+        .categories { padding: 60px 0; background: linear-gradient(rgba(10,10,10,0.85), rgba(10,10,10,0.9)), url('https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920'); background-size: cover; background-position: center; background-attachment: fixed; }
+        .section-title { text-align: center; font-size: 42px; margin-bottom: 40px; background: linear-gradient(135deg, #d4af37, #ffd700); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; }
+        .category-card { text-align: center; padding: 25px 15px; background: rgba(255,255,255,0.08); border-radius: 15px; transition: all 0.3s; cursor: pointer; border: 1px solid rgba(212,175,55,0.3); backdrop-filter: blur(5px); }
+        .category-card:hover { transform: translateY(-8px); border-color: #d4af37; background: rgba(212,175,55,0.1); }
+        .category-icon { width: 60px; height: 60px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(255,215,0,0.1)); border-radius: 50%; transition: all 0.3s; }
+        .category-card:hover .category-icon { transform: scale(1.1); }
+        .category-icon svg { width: 35px; height: 35px; fill: none; stroke: #d4af37; stroke-width: 1.5; }
+        .category-card h3 { margin-top: 10px; color: #d4af37; font-size: 16px; }
+        .category-card p { color: #aaa; font-size: 11px; margin-top: 5px; }
+        
+        /* Smaller Product Cards - 6 per row on desktop */
+        .category-section { padding: 50px 0; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .category-section .section-title { font-size: 32px; margin-bottom: 25px; text-align: left; display: flex; align-items: center; gap: 10px; }
+        .product-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+        }
+        .product-card { 
+            background: rgba(255,255,255,0.05); 
+            border-radius: 10px; 
+            overflow: hidden; 
+            transition: all 0.4s; 
+            border: 1px solid rgba(212,175,55,0.2); 
+            backdrop-filter: blur(5px); 
+            cursor: pointer; 
+        }
+        .product-card:hover { 
+            transform: translateY(-3px); 
+            border-color: #d4af37; 
+            box-shadow: 0 8px 16px rgba(212,175,55,0.15); 
+        }
+        .product-image { 
+            height: 180px; 
+            background: #1a1a1a; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        .product-image img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.5s; 
+        }
+        .product-card:hover .product-image img { 
+            transform: scale(1.05); 
+        }
+        .product-info { 
+            padding: 12px; 
+        }
+        .product-name { 
+            font-size: 13px; 
+            font-weight: bold; 
+            margin-bottom: 5px; 
+            color: #fff; 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .rating { 
+            color: #d4af37; 
+            font-size: 11px; 
+            margin: 3px 0; 
+        }
+        .product-price { 
+            font-size: 15px; 
+            color: #d4af37; 
+            font-weight: bold; 
+            margin: 5px 0; 
+        }
+        .cart-btn { 
+            display: inline-block; 
+            padding: 4px 10px; 
+            background: transparent; 
+            color: #d4af37; 
+            text-decoration: none; 
+            border-radius: 20px; 
+            border: 1px solid #d4af37; 
+            transition: all 0.3s; 
+            cursor: pointer; 
+            font-size: 11px; 
+            width: 100%; 
+            text-align: center; 
+        }
+        .cart-btn:hover { 
+            background: #d4af37; 
+            color: #0a0a0a; 
+        }
+        .quantity-input { 
+            width: 45px; 
+            padding: 4px; 
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid #d4af37; 
+            border-radius: 4px; 
+            color: white; 
+            margin-right: 5px; 
+            font-size: 11px;
+        }
+        .view-all { text-align: center; margin-top: 20px; }
+        .view-all-btn { display: inline-block; padding: 8px 25px; background: transparent; color: #d4af37; text-decoration: none; border-radius: 40px; border: 1.5px solid #d4af37; transition: all 0.3s; }
+        .view-all-btn:hover { background: #d4af37; color: #0a0a0a; }
+        
+        .flash-messages { position: fixed; top: 80px; right: 20px; z-index: 1000; }
+        .flash { padding: 12px 24px; border-radius: 8px; margin-bottom: 10px; }
+        .flash.success { background: #28a745; color: white; }
+        .flash.error { background: #dc3545; color: white; }
+        
+        /* Modal Styles */
+        .product-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-container { max-width: 1000px; width: 90%; background: #1a1a2e; border-radius: 15px; border: 2px solid #d4af37; overflow: hidden; animation: modalFadeIn 0.3s ease-out; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid #d4af37; display: flex; justify-content: space-between; align-items: center; background: #1a1a2e; position: sticky; top: 0; z-index: 10; }
+        .modal-header h3 { color: #d4af37; font-size: 20px; }
+        .close-modal { color: #d4af37; font-size: 28px; cursor: pointer; transition: all 0.3s; line-height: 1; }
+        .close-modal:hover { transform: scale(1.1); }
+        .modal-body { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 25px; }
+        .modal-slider { position: relative; width: 100%; }
+        .modal-slider .slick-slide { text-align: center; }
+        .modal-slider .slick-slide img { width: 100%; max-height: 350px; object-fit: contain; border-radius: 10px; background: #0a0a0a; cursor: pointer; }
+        .modal-slider .slick-prev:before, .modal-slider .slick-next:before { color: #d4af37; font-size: 30px; opacity: 1; }
+        .modal-slider .slick-prev { left: -35px; z-index: 1; }
+        .modal-slider .slick-next { right: -35px; z-index: 1; }
+        .modal-slider .slick-dots { bottom: -25px; }
+        .modal-slider .slick-dots li button:before { color: #d4af37; font-size: 10px; }
+        .modal-slider .slick-dots li.slick-active button:before { color: #ffd700; }
+        .modal-info { padding: 0 10px; }
+        .modal-info h2 { color: #d4af37; margin-bottom: 10px; font-size: 24px; }
+        .modal-price { font-size: 28px; color: #d4af37; font-weight: bold; margin: 15px 0; }
+        .modal-description { color: #ccc; line-height: 1.6; margin: 15px 0; font-size: 14px; }
+        .modal-category { display: inline-block; background: rgba(212,175,55,0.2); padding: 5px 15px; border-radius: 20px; font-size: 12px; margin-bottom: 15px; }
+        .modal-rating { color: #d4af37; margin: 10px 0; font-size: 14px; }
+        .modal-quantity { width: 70px; padding: 8px; background: #333; color: white; border: 1px solid #d4af37; border-radius: 5px; margin-right: 10px; }
+        .modal-add-btn { padding: 8px 20px; background: #d4af37; color: #0a0a0a; border: none; border-radius: 40px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+        .modal-add-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212,175,55,0.3); }
+        
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 36px; }
+            .nav a { padding: 5px 10px; font-size: 11px; }
+            .section-title { font-size: 28px; }
+            .header-content { flex-direction: column; }
+            .nav { justify-content: center; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .product-image { height: 150px; }
+            .modal-body { grid-template-columns: 1fr; gap: 20px; }
+            .modal-slider .slick-prev { left: 0; }
+            .modal-slider .slick-next { right: 0; }
+            .search-container { margin-left: 0; margin-top: 10px; }
+            .search-form input { width: 150px; }
+        }
+        
+        footer { background: linear-gradient(rgba(5,5,10,0.95), rgba(0,0,0,0.98)), url('https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=1920'); background-size: cover; background-position: center; padding: 50px 0 30px; border-top: 1px solid #d4af37; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-col h3 { color: #d4af37; font-size: 20px; margin-bottom: 20px; position: relative; display: inline-block; }
+        .footer-col h3::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 50px; height: 2px; background: #d4af37; }
+        .footer-col p { color: #ccc; line-height: 1.6; margin-bottom: 15px; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col ul li a { color: #ccc; text-decoration: none; transition: all 0.3s; }
+        .footer-col ul li a:hover { color: #d4af37; padding-left: 5px; }
+        .contact-info p { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .social-icons { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+        .social-icon { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s; text-decoration: none; }
+        .social-icon svg { width: 22px; height: 22px; }
+        .social-icon.whatsapp { background: #25D366; color: white; }
+        .social-icon.whatsapp:hover { background: transparent; border: 2px solid #25D366; color: #25D366; transform: translateY(-3px); }
+        .social-icon.instagram { background: linear-gradient(135deg, #833AB4, #E4405F, #F56040); color: white; }
+        .social-icon.instagram:hover { background: transparent; border: 2px solid #E4405F; color: #E4405F; transform: translateY(-3px); }
+        .social-icon.tiktok { background: #000000; color: #00f2ea; border: 1px solid #00f2ea; }
+        .social-icon.tiktok:hover { background: #00f2ea; color: #000000; transform: translateY(-3px); }
+        .social-icon.youtube { background: #FF0000; color: white; }
+        .social-icon.youtube:hover { background: transparent; border: 2px solid #FF0000; color: #FF0000; transform: translateY(-3px); }
+        .social-icon.facebook { background: #1877f2; color: white; }
+        .social-icon.facebook:hover { background: transparent; border: 2px solid #1877f2; color: #1877f2; transform: translateY(-3px); }
+        .newsletter-form { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .newsletter-form input { flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid #d4af37; border-radius: 40px; color: white; }
+        .newsletter-form button { padding: 12px 25px; background: #d4af37; color: #0a0a0a; border: none; border-radius: 40px; cursor: pointer; font-weight: bold; }
+        .copyright { text-align: center; padding-top: 30px; border-top: 1px solid rgba(212,175,55,0.3); color: #888; font-size: 14px; }
+        .fade-up { opacity: 0; transform: translateY(50px); transition: all 0.8s ease-out; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-circle">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" id="logoImg" onerror="this.parentElement.style.display='none'; document.getElementById('logoTextFallback').style.display='block';">
+                    </div>
+                    <div class="logo-text" id="logoTextFallback" style="display: block;">
+                        <h1>ELITE SPARKLE</h1>
+                        <p>LUXURY JEWELRY PAKISTAN</p>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <form class="search-form" action="/search" method="GET">
+                        <input type="text" name="q" placeholder="🔍 Search products..." required>
+                        <button type="submit">Search</button>
+                    </form>
+                </div>
+                
+                <div class="nav">
+                    <a href="/">Home</a>
+                    <a href="/category/rings">💍 Rings</a>
+                    <a href="/category/necklaces">📿 Necklaces</a>
+                    <a href="/category/earrings">✨ Earrings</a>
+                    <a href="/category/bracelets">🔗 Bracelets</a>
+                    <a href="/category/watches">🕐 Watches</a>
+                    <a href="/category/sets">👑 Sets</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/cart" class="cart-icon">🛒 Cart</a>
+                    
+                    {% if session.user_name %}
+                        <div class="profile-dropdown">
+                            <div class="profile-trigger">
+                                <div class="profile-avatar">{{ session.user_name[0]|upper }}</div>
+                                <span class="profile-name">{{ session.user_name }}</span>
+                                <span class="dropdown-arrow">▼</span>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-header">
+                                    <div class="dropdown-avatar">{{ session.user_name[0]|upper }}</div>
+                                    <div class="dropdown-info">
+                                        <strong>{{ session.user_name }}</strong>
+                                        <small>{{ session.user_email }}</small>
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a href="/my_orders" class="dropdown-item">📦 My Orders</a>
+                                <a href="/profile" class="dropdown-item">👤 My Profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="/logout" class="dropdown-item logout">🚪 Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="/login" class="login-btn">Login</a>
+                        <a href="/register" class="register-btn">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <div class="hero fade-up" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('{{ url_for('static', filename='uploads/' + cover_photo) if cover_photo else 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1920' }}'); background-size: cover; background-position: center; background-attachment: fixed;">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Timeless Elegance</h1>
+                <p>Discover Pakistan's Finest Jewelry Collection</p>
+                <a href="#products" class="btn">Shop Now →</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="categories fade-up">
+        <div class="container">
+            <h2 class="section-title">Shop by Category</h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="location.href='/category/rings'">
+                    <div class="category-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="10" r="6" fill="none"/><path d="M12 4 L12 2 M12 2 L15 1 M12 2 L9 1"/><path d="M8 16 L6 20 L18 20 L16 16"/><circle cx="12" cy="18" r="1" fill="#d4af37"/></svg></div>
+                    <h3>Rings</h3><p>Engagement & Wedding</p>
+                </div>
+                <div class="category-card" onclick="location.href='/category/necklaces'">
+                    <div class="category-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 2 L12 8"/><path d="M8 8 L16 8"/><path d="M6 8 L4 20 L20 20 L18 8"/><circle cx="12" cy="14" r="2" fill="none"/></svg></div>
+                    <h3>Necklaces</h3><p>Pendants & Chains</p>
+                </div>
+                <div class="category-card" onclick="location.href='/category/earrings'">
+                    <div class="category-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="3" fill="none"/><path d="M12 11 L12 16"/><path d="M9 16 L15 16"/><circle cx="12" cy="18" r="1" fill="#d4af37"/></svg></div>
+                    <h3>Earrings</h3><p>Studs & Drops</p>
+                </div>
+                <div class="category-card" onclick="location.href='/category/bracelets'">
+                    <div class="category-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M7 12 L17 12"/><path d="M5 8 L19 8"/><path d="M3 16 L21 16"/><circle cx="8" cy="12" r="1.5" fill="#d4af37"/><circle cx="12" cy="12" r="1.5" fill="#d4af37"/><circle cx="16" cy="12" r="1.5" fill="#d4af37"/></svg></div>
+                    <h3>Bracelets</h3><p>Bangles & Cuffs</p>
+                </div>
+                <div class="category-card" onclick="location.href='/category/watches'">
+                    <div class="category-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9" fill="none"/><path d="M12 8 L12 12 L15 15"/><path d="M9 2 L15 2"/><path d="M9 22 L15 22"/></svg></div>
+                    <h3>Watches</h3><p>Luxury Timepieces</p>
+                </div>
+                <div class="category-card" onclick="location.href='/category/sets'">
+                    <div class="category-icon"><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2" fill="none"/><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/><circle cx="12" cy="14" r="3" fill="none"/><path d="M12 11v6 M9 14h6"/></svg></div>
+                    <h3>Jewelry Sets</h3><p>Complete Bridal Sets</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Featured Collection Section - JEWELRY SETS -->
+    {% if products_by_category.sets and products_by_category.sets|length > 0 %}
+    <div class="category-section fade-up" id="products">
+        <div class="container">
+            <h2 class="section-title">👑 Featured Collection <span>Jewelry Sets</span></h2>
+            <div class="product-grid">
+                {% for product in products_by_category.sets[:4] %}
+                <div class="product-card" onclick="openProductModal({{ product.id }})">
+                    <div class="product-image">
+                        {% if product.display_image %}
+                            <img src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name[:30] }}{% if product.name|length > 30 %}...{% endif %}</h3>
+                        <div class="rating">
+                            {% if product.avg_rating > 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= product.avg_rating|round %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ product.review_count }})
+                            {% else %}
+                                No reviews yet
+                            {% endif %}
+                        </div>
+                        <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                        <form method="POST" action="/add_to_cart/{{ product.id }}" onclick="event.stopPropagation()">
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                            <button type="submit" class="cart-btn">Add to Cart 🛒</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if products_by_category.sets|length > 4 %}
+            <div class="view-all">
+                <a href="/category/sets" class="view-all-btn">View All Jewelry Sets →</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- RINGS SECTION -->
+    {% if products_by_category.rings and products_by_category.rings|length > 0 %}
+    <div class="category-section fade-up">
+        <div class="container">
+            <h2 class="section-title">💍 Rings Collection</h2>
+            <div class="product-grid">
+                {% for product in products_by_category.rings[:4] %}
+                <div class="product-card" onclick="openProductModal({{ product.id }})">
+                    <div class="product-image">
+                        {% if product.display_image %}
+                            <img src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name[:30] }}{% if product.name|length > 30 %}...{% endif %}</h3>
+                        <div class="rating">
+                            {% if product.avg_rating > 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= product.avg_rating|round %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ product.review_count }})
+                            {% else %}
+                                No reviews yet
+                            {% endif %}
+                        </div>
+                        <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                        <form method="POST" action="/add_to_cart/{{ product.id }}" onclick="event.stopPropagation()">
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                            <button type="submit" class="cart-btn">Add to Cart 🛒</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if products_by_category.rings|length > 4 %}
+            <div class="view-all">
+                <a href="/category/rings" class="view-all-btn">View All Rings →</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- NECKLACES SECTION -->
+    {% if products_by_category.necklaces and products_by_category.necklaces|length > 0 %}
+    <div class="category-section fade-up">
+        <div class="container">
+            <h2 class="section-title">📿 Necklaces Collection</h2>
+            <div class="product-grid">
+                {% for product in products_by_category.necklaces[:4] %}
+                <div class="product-card" onclick="openProductModal({{ product.id }})">
+                    <div class="product-image">
+                        {% if product.display_image %}
+                            <img src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name[:30] }}{% if product.name|length > 30 %}...{% endif %}</h3>
+                        <div class="rating">
+                            {% if product.avg_rating > 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= product.avg_rating|round %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ product.review_count }})
+                            {% else %}
+                                No reviews yet
+                            {% endif %}
+                        </div>
+                        <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                        <form method="POST" action="/add_to_cart/{{ product.id }}" onclick="event.stopPropagation()">
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                            <button type="submit" class="cart-btn">Add to Cart 🛒</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if products_by_category.necklaces|length > 4 %}
+            <div class="view-all">
+                <a href="/category/necklaces" class="view-all-btn">View All Necklaces →</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- EARRINGS SECTION -->
+    {% if products_by_category.earrings and products_by_category.earrings|length > 0 %}
+    <div class="category-section fade-up">
+        <div class="container">
+            <h2 class="section-title">✨ Earrings Collection</h2>
+            <div class="product-grid">
+                {% for product in products_by_category.earrings[:4] %}
+                <div class="product-card" onclick="openProductModal({{ product.id }})">
+                    <div class="product-image">
+                        {% if product.display_image %}
+                            <img src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name[:30] }}{% if product.name|length > 30 %}...{% endif %}</h3>
+                        <div class="rating">
+                            {% if product.avg_rating > 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= product.avg_rating|round %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ product.review_count }})
+                            {% else %}
+                                No reviews yet
+                            {% endif %}
+                        </div>
+                        <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                        <form method="POST" action="/add_to_cart/{{ product.id }}" onclick="event.stopPropagation()">
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                            <button type="submit" class="cart-btn">Add to Cart 🛒</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if products_by_category.earrings|length > 4 %}
+            <div class="view-all">
+                <a href="/category/earrings" class="view-all-btn">View All Earrings →</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- BRACELETS SECTION -->
+    {% if products_by_category.bracelets and products_by_category.bracelets|length > 0 %}
+    <div class="category-section fade-up">
+        <div class="container">
+            <h2 class="section-title">🔗 Bracelets Collection</h2>
+            <div class="product-grid">
+                {% for product in products_by_category.bracelets[:4] %}
+                <div class="product-card" onclick="openProductModal({{ product.id }})">
+                    <div class="product-image">
+                        {% if product.display_image %}
+                            <img src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name[:30] }}{% if product.name|length > 30 %}...{% endif %}</h3>
+                        <div class="rating">
+                            {% if product.avg_rating > 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= product.avg_rating|round %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ product.review_count }})
+                            {% else %}
+                                No reviews yet
+                            {% endif %}
+                        </div>
+                        <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                        <form method="POST" action="/add_to_cart/{{ product.id }}" onclick="event.stopPropagation()">
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                            <button type="submit" class="cart-btn">Add to Cart 🛒</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if products_by_category.bracelets|length > 4 %}
+            <div class="view-all">
+                <a href="/category/bracelets" class="view-all-btn">View All Bracelets →</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- WATCHES SECTION -->
+    {% if products_by_category.watches and products_by_category.watches|length > 0 %}
+    <div class="category-section fade-up">
+        <div class="container">
+            <h2 class="section-title">🕐 Watches Collection</h2>
+            <div class="product-grid">
+                {% for product in products_by_category.watches[:4] %}
+                <div class="product-card" onclick="openProductModal({{ product.id }})">
+                    <div class="product-image">
+                        {% if product.display_image %}
+                            <img src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name[:30] }}{% if product.name|length > 30 %}...{% endif %}</h3>
+                        <div class="rating">
+                            {% if product.avg_rating > 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= product.avg_rating|round %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ product.review_count }})
+                            {% else %}
+                                No reviews yet
+                            {% endif %}
+                        </div>
+                        <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                        <form method="POST" action="/add_to_cart/{{ product.id }}" onclick="event.stopPropagation()">
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                            <button type="submit" class="cart-btn">Add to Cart 🛒</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if products_by_category.watches|length > 4 %}
+            <div class="view-all">
+                <a href="/category/watches" class="view-all-btn">View All Watches →</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Product Modal -->
+    <div id="productModal" class="product-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>✨ Product Details</h3>
+                <span class="close-modal" onclick="closeProductModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-slider" id="modalSlider"></div>
+                <div class="modal-info">
+                    <div class="modal-category" id="modalCategory"></div>
+                    <h2 id="modalName"></h2>
+                    <div class="modal-rating" id="modalRating"></div>
+                    <div class="modal-price" id="modalPrice"></div>
+                    <div class="modal-description" id="modalDescription"></div>
+                    <form id="modalAddToCartForm" method="POST" action="">
+                        <label>Quantity:</label>
+                        <input type="number" name="quantity" value="1" min="1" class="modal-quantity" id="modalQuantity">
+                        <button type="submit" class="modal-add-btn">🛒 Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="fade-up">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Elite Sparkle</h3>
+                    <p>Pakistan's premier luxury jewelry destination. We offer authentic, handcrafted pieces that celebrate life's special moments.</p>
+                    <div class="social-icons">
+                        <a href="https://wa.me/923201546481" class="social-icon whatsapp" target="_blank"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.5 3.47 1.44 4.97L2 21.87l5.17-1.36c1.47.8 3.12 1.22 4.82 1.22 5.46 0 9.91-4.45 9.91-9.91 0-5.46-4.45-9.91-9.91-9.91zm0 1.5c4.64 0 8.41 3.77 8.41 8.41 0 4.64-3.77 8.41-8.41 8.41-1.48 0-2.93-.39-4.22-1.12l-.3-.18-3.06.81.81-3.01-.2-.32c-.79-1.31-1.21-2.8-1.21-4.33 0-4.64 3.77-8.41 8.41-8.41z"/><path d="M16.77 13.96c-.23-.12-1.37-.68-1.58-.76-.21-.08-.36-.12-.51.12-.15.24-.58.76-.71.92-.13.16-.26.18-.49.06-.23-.12-.97-.36-1.85-1.14-.68-.62-1.14-1.38-1.27-1.61-.13-.23-.01-.35.1-.46.1-.1.23-.26.34-.39.11-.13.15-.23.22-.38.07-.15.04-.28-.02-.39-.06-.11-.51-1.23-.7-1.68-.19-.44-.38-.38-.51-.39-.13-.01-.28-.01-.43-.01-.15 0-.39.06-.6.28-.21.22-.79.77-.79 1.88 0 1.11.81 2.18.92 2.33.11.15 1.58 2.41 3.82 3.38.53.23 1.02.37 1.44.47.6.15 1.15.13 1.59.08.49-.06 1.37-.56 1.56-1.1.19-.54.19-1 .13-1.1-.06-.1-.23-.16-.46-.28z"/></svg></a>
+                        <a href="https://www.instagram.com/elitesparkle592" class="social-icon instagram" target="_blank"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.06 1.81.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.35 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.06 1.17-.25 1.81-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.35-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.06-1.81-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.35-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.06-1.17.25-1.81.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.35 2.23-.41 1.27-.06 1.65-.07 4.85-.07zM12 0C8.74 0 8.33.01 7.05.07c-1.27.06-2.14.26-2.9.55-.79.3-1.46.71-2.13 1.38-.67.67-1.08 1.34-1.38 2.13-.29.76-.49 1.63-.55 2.9C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.14.55 2.9.3.79.71 1.46 1.38 2.13.67.67 1.34 1.08 2.13 1.38.76.29 1.63.49 2.9.55 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c1.27-.06 2.14-.26 2.9-.55.79-.3 1.46-.71 2.13-1.38.67-.67 1.08-1.34 1.38-2.13.29-.76.49-1.63.55-2.9.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.14-.55-2.9-.3-.79-.71-1.46-1.38-2.13-.67-.67-1.34-1.08-2.13-1.38-.76-.29-1.63-.49-2.9-.55C15.67.01 15.26 0 12 0z"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/><circle cx="18.5" cy="5.5" r="1.2" fill="currentColor"/></svg></a>
+                        <a href="https://www.tiktok.com/@elite.sparkle" class="social-icon tiktok" target="_blank"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 15.58a6.34 6.34 0 0 0 10.86 4.7 6.33 6.33 0 0 0 1.81-4.7V8.33a7.23 7.23 0 0 0 4.22 1.45V6.3a4.8 4.8 0 0 1-2.3-.61z"/></svg></a>
+                        <a href="https://www.youtube.com/@MuhammadQasim1204-l7i" class="social-icon youtube" target="_blank"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M23.5 6.2c-.3-1.1-1.1-1.9-2.2-2.2C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.3.5c-1.1.3-1.9 1.1-2.2 2.2C0 8 0 12 0 12s0 4 .5 5.8c.3 1.1 1.1 1.9 2.2 2.2 1.8.5 9.3.5 9.3.5s7.5 0 9.3-.5c1.1-.3 1.9-1.1 2.2-2.2.5-1.8.5-5.8.5-5.8s0-4-.5-5.8zM9.5 15.5v-7l6 3.5-6 3.5z"/></svg></a>
+                        <a href="https://www.facebook.com/share/1Db8dievH7/" class="social-icon facebook" target="_blank"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.41 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.68 4.54-4.68 1.31 0 2.68.23 2.68.23v2.96h-1.51c-1.49 0-1.95.93-1.95 1.88v2.26h3.32l-.53 3.49h-2.79V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/category/rings">Rings</a></li>
+                        <li><a href="/category/necklaces">Necklaces</a></li>
+                        <li><a href="/category/earrings">Earrings</a></li>
+                        <li><a href="/category/bracelets">Bracelets</a></li>
+                        <li><a href="/category/watches">Watches</a></li>
+                        <li><a href="/category/sets">Jewelry Sets</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact Us</h3>
+                    <div class="contact-info">
+                        <p>📧 <strong>Muhammad Qasim</strong></p>
+                        <p>✉️ kasim918114@gmail.com</p>
+                        <p>📍 Karachi, Pakistan</p>
+                        <p>⏰ Mon - Sat: 10am - 8pm</p>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe for exclusive offers & new arrivals!</p>
+                    <form class="newsletter-form" onsubmit="alert('Thank you for subscribing!'); return false;">
+                        <input type="email" placeholder="Your email address" required>
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2024 Elite Sparkle - Premium Jewelry Pakistan. All Rights Reserved.</p>
+                <p style="margin-top: 10px; font-size: 12px;">✨ Handcrafted with Love | Free Shipping Across Pakistan | 7-Day Return Policy ✨</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+    <script>
+        let currentSlider = null;
+        
+        function openProductModal(productId) {
+            fetch(`/api/product/${productId}`)
+                .then(response => response.json())
+                .then(product => {
+                    document.getElementById('modalName').innerText = product.name;
+                    document.getElementById('modalPrice').innerHTML = `₨ ${parseFloat(product.price).toFixed(2)}`;
+                    document.getElementById('modalDescription').innerHTML = product.description || 'Premium quality jewelry crafted with care.';
+                    
+                    let categoryName = product.category;
+                    const categoryMap = {
+                        'rings': 'Rings', 'necklaces': 'Necklaces', 'earrings': 'Earrings',
+                        'bracelets': 'Bracelets', 'watches': 'Watches', 'sets': 'Jewelry Sets'
+                    };
+                    document.getElementById('modalCategory').innerHTML = categoryMap[categoryName] || categoryName;
+                    
+                    const avgRating = product.avg_rating || 0;
+                    let stars = '';
+                    for (let i = 1; i <= 5; i++) stars += i <= Math.round(avgRating) ? '★' : '☆';
+                    document.getElementById('modalRating').innerHTML = `${stars} (${product.review_count || 0} reviews)`;
+                    
+                    let sliderHtml = '';
+                    const images = product.images || [];
+                    if (images.length > 0) {
+                        images.forEach(img => {
+                            sliderHtml += `<div><a href="/static/product_images/${img}" data-lightbox="product-gallery"><img src="/static/product_images/${img}" alt="${product.name}" onerror="this.src='/static/uploads/default.jpg'"></a></div>`;
+                        });
+                    } else {
+                        sliderHtml = `<div><img src="/static/uploads/default.jpg" alt="${product.name}"></div>`;
+                    }
+                    
+                    const sliderElement = document.getElementById('modalSlider');
+                    sliderElement.innerHTML = sliderHtml;
+                    
+                    if (currentSlider) {
+                        try { $('#modalSlider').slick('unslick'); } catch(e) {}
+                        currentSlider = null;
+                    }
+                    
+                    setTimeout(() => {
+                        currentSlider = $('#modalSlider').slick({
+                            slidesToShow: 1,
+                            slidesToScroll: 1,
+                            arrows: true,
+                            dots: true,
+                            infinite: images.length > 1,
+                            speed: 500
+                        });
+                    }, 50);
+                    
+                    document.getElementById('modalAddToCartForm').action = `/add_to_cart/${product.id}`;
+                    document.getElementById('productModal').style.display = 'flex';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading product details');
+                });
+        }
+        
+        function closeProductModal() {
+            if (currentSlider) {
+                try { $('#modalSlider').slick('unslick'); } catch(e) {}
+                currentSlider = null;
+            }
+            document.getElementById('modalSlider').innerHTML = '';
+            document.getElementById('productModal').style.display = 'none';
+        }
+        
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('productModal')) closeProductModal();
+        }
+        
+        setTimeout(() => {
+            document.querySelectorAll('.flash').forEach(flash => flash.remove());
+        }, 3000);
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        
+        const logoImg = document.querySelector('.logo-circle img');
+        const logoText = document.getElementById('logoTextFallback');
+        if (logoImg && logoImg.complete && logoImg.naturalWidth === 0) {
+            logoImg.parentElement.style.display = 'none';
+            if (logoText) logoText.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

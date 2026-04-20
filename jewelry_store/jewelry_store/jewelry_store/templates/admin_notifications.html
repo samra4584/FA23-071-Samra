@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications - Elite Sparkle Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .admin-wrapper { display: flex; min-height: 100vh; }
+        .side-panel { width: 280px; background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%); border-right: 1px solid #d4af37; position: fixed; height: 100vh; }
+        .side-panel-header { padding: 25px 20px; border-bottom: 1px solid #d4af37; text-align: center; }
+        .side-panel-header h2 { color: #d4af37; }
+        .side-menu { padding: 20px 0; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #fff; text-decoration: none; transition: all 0.3s; border-left: 3px solid transparent; }
+        .menu-item:hover { background: rgba(212,175,55,0.1); border-left-color: #d4af37; }
+        .menu-item.active { background: rgba(212,175,55,0.15); border-left-color: #d4af37; color: #d4af37; }
+        .main-content { flex: 1; margin-left: 280px; padding: 20px; }
+        .admin-header { background: #1a1a1a; padding: 15px 25px; border-bottom: 1px solid #d4af37; margin-bottom: 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; }
+        .section h2 { color: #d4af37; margin-bottom: 20px; }
+        .notification-list { display: flex; flex-direction: column; gap: 15px; }
+        .notification-card { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 15px; border-left: 3px solid #d4af37; transition: all 0.3s; }
+        .notification-card:hover { background: rgba(212,175,55,0.05); }
+        .notification-card.read { opacity: 0.6; border-left-color: #888; }
+        .notification-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .notification-type { color: #d4af37; font-weight: bold; }
+        .notification-date { color: #888; font-size: 12px; }
+        .notification-message { margin-bottom: 10px; line-height: 1.5; }
+        .notification-name { color: #d4af37; font-weight: bold; }
+        .notification-email { color: #888; font-size: 12px; }
+        .btn { padding: 8px 20px; background: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
+        @media (max-width: 768px) { .side-panel { width: 70px; } .side-panel-header h2, .menu-item span:last-child { display: none; } .main-content { margin-left: 70px; } }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <div class="side-panel">
+            <div class="side-panel-header"><h2>✨ Elite Sparkle</h2></div>
+            <div class="side-menu">
+                <a href="/admin/dashboard" class="menu-item"><span>📊</span><span>Dashboard</span></a>
+                <a href="/admin/add" class="menu-item"><span>➕</span><span>Add Product</span></a>
+                <a href="/admin/users" class="menu-item"><span>👥</span><span>Users</span></a>
+                <a href="/admin/reviews" class="menu-item"><span>⭐</span><span>Reviews</span></a>
+                <a href="/admin/notifications" class="menu-item active"><span>🔔</span><span>Notifications</span></a>
+                <a href="/admin/site_settings" class="menu-item"><span>⚙️</span><span>Site Settings</span></a>
+                <a href="/" class="menu-item"><span>🏠</span><span>View Store</span></a>
+                <a href="/admin/logout" class="menu-item"><span>🚪</span><span>Logout</span></a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="admin-header">
+                <h1>🔔 Notifications</h1>
+                <a href="/admin/dashboard" style="color: #d4af37;">← Back to Dashboard</a>
+            </div>
+            
+            <div class="section">
+                <h2>All Contact Form Messages</h2>
+                {% if notifications %}
+                <div class="notification-list">
+                    {% for notif in notifications %}
+                    <div class="notification-card {% if notif.is_read %}read{% endif %}">
+                        <div class="notification-header">
+                            <span class="notification-type">📧 Contact Form Message</span>
+                            <span class="notification-date">{{ notif.created_at[:19] }}</span>
+                        </div>
+                        <div class="notification-message">
+                            <span class="notification-name">{{ notif.name or 'Anonymous' }}</span>
+                            <span class="notification-email">({{ notif.email or 'No email' }})</span>
+                            <p style="margin-top: 8px;">{{ notif.message }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-data" style="text-align: center; padding: 40px;">
+                    <p>📭 No notifications yet.</p>
+                    <p>When customers contact you through the contact form, messages will appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

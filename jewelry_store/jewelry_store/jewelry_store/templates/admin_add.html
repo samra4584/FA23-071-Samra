@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product - Elite Sparkle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .admin-header { background: #1a1a1a; padding: 20px; border-bottom: 1px solid #d4af37; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+        .container { max-width: 800px; margin: 40px auto; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 15px; }
+        h2 { color: #d4af37; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #d4af37; font-weight: bold; }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #d4af37;
+            border-radius: 5px;
+            color: white;
+        }
+        button { background: #28a745; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { transform: translateY(-2px); }
+        .note { font-size: 12px; color: #888; margin-top: 5px; }
+        .image-preview-area { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
+        .image-preview { position: relative; width: 100px; }
+        .image-preview img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; border: 1px solid #d4af37; }
+        .remove-preview { position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>Add New Product</h1>
+        <a href="/admin/dashboard" style="color: #d4af37;">← Back to Dashboard</a>
+    </div>
+    <div class="container">
+        <h2>Product Details</h2>
+        <form method="POST" enctype="multipart/form-data" id="productForm">
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" name="name" required placeholder="e.g., Diamond Ring, Luxury Watch">
+            </div>
+            <div class="form-group">
+                <label>Price (PKR)</label>
+                <input type="number" step="0.01" name="price" required placeholder="e.g., 29999">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" required>
+                    <option value="rings">💍 Rings</option>
+                    <option value="necklaces">📿 Necklaces</option>
+                    <option value="earrings">✨ Earrings</option>
+                    <option value="bracelets">🔗 Bracelets</option>
+                    <option value="watches">🕐 Watches</option>
+                    <option value="pendants">💎 Pendants</option>
+                    <option value="sets">👑 Jewelry Sets</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="4" placeholder="Describe the product..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Product Images (Select multiple)</label>
+                <input type="file" name="product_images" id="product_images" accept="image/*" multiple required>
+                <div class="note">Hold Ctrl (Windows) or Cmd (Mac) to select multiple images. First image will be the main display image.</div>
+                <div id="imagePreview" class="image-preview-area"></div>
+            </div>
+            <button type="submit">Add Product</button>
+        </form>
+    </div>
+    
+    <script>
+        document.getElementById('product_images').addEventListener('change', function(e) {
+            const previewArea = document.getElementById('imagePreview');
+            previewArea.innerHTML = '';
+            const files = Array.from(e.target.files);
+            
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const div = document.createElement('div');
+                    div.className = 'image-preview';
+                    div.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview ${index + 1}">
+                        <span class="remove-preview" onclick="this.parentElement.remove()">×</span>
+                    `;
+                    previewArea.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
+</body>
+</html>

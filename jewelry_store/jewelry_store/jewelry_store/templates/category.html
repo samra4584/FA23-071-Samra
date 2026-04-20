@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ category|capitalize }} - Elite Sparkle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .header { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); padding: 15px 0; border-bottom: 2px solid #d4af37; position: sticky; top: 0; z-index: 100; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo-circle { width: 60px; height: 60px; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #d4af37, #ffd700); display: flex; align-items: center; justify-content: center; }
+        .logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-text h1 { font-size: 28px; background: linear-gradient(135deg, #d4af37, #ffd700); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .logo-text p { font-size: 10px; color: #d4af37; letter-spacing: 3px; }
+        .nav { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+        .nav a { color: #ffffff; text-decoration: none; padding: 6px 12px; margin: 0 2px; border: 1.5px solid #d4af37; border-radius: 30px; transition: all 0.3s; font-size: 12px; background: transparent; }
+        .nav a:hover { background: #d4af37; color: #0a0a0a; transform: translateY(-2px); }
+        .cart-icon { background: rgba(212,175,55,0.15); }
+        
+        .profile-dropdown { position: relative; display: inline-block; }
+        .profile-trigger { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 5px 12px; border: 1.5px solid #d4af37; border-radius: 40px; background: transparent; }
+        .profile-trigger:hover { background: rgba(212,175,55,0.15); }
+        .profile-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #ffd700); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #0a0a0a; font-size: 12px; }
+        .profile-name { color: white; font-size: 12px; }
+        .dropdown-arrow { color: #d4af37; font-size: 10px; }
+        .dropdown-menu { position: absolute; top: 45px; right: 0; width: 250px; background: #1a1a2e; border-radius: 12px; border: 1px solid #d4af37; box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s; z-index: 1000; }
+        .profile-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .dropdown-header { display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        .dropdown-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #ffd700); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; color: #0a0a0a; }
+        .dropdown-info strong { color: white; font-size: 13px; }
+        .dropdown-info small { color: #888; font-size: 10px; }
+        .dropdown-divider { height: 1px; background: rgba(212,175,55,0.3); margin: 5px 0; }
+        .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: white; text-decoration: none; transition: all 0.2s; font-size: 13px; }
+        .dropdown-item:hover { background: rgba(212,175,55,0.1); color: #d4af37; }
+        .dropdown-item.logout { color: #ff6b6b; }
+        
+        .products-section { padding: 60px 0; }
+        .section-title { font-size: 42px; margin-bottom: 30px; color: #d4af37; text-align: center; }
+        .category-badge { display: inline-block; background: rgba(212,175,55,0.2); padding: 8px 25px; border-radius: 40px; margin-bottom: 40px; text-align: center; display: block; width: fit-content; margin-left: auto; margin-right: auto; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .product-card { background: rgba(255,255,255,0.05); border-radius: 15px; overflow: hidden; transition: transform 0.3s; border: 1px solid rgba(212,175,55,0.2); cursor: pointer; }
+        .product-card:hover { transform: translateY(-5px); border-color: #d4af37; box-shadow: 0 20px 40px rgba(212,175,55,0.2); }
+        .product-image { height: 280px; background: #1a1a1a; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .product-card:hover .product-image img { transform: scale(1.05); }
+        .product-info { padding: 20px; }
+        .product-name { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #fff; }
+        .product-price { font-size: 24px; color: #d4af37; font-weight: bold; margin: 10px 0; }
+        .rating { color: #d4af37; font-size: 13px; margin: 5px 0; }
+        .view-btn { display: inline-block; padding: 8px 20px; background: transparent; color: #d4af37; text-decoration: none; border-radius: 25px; border: 1.5px solid #d4af37; transition: all 0.3s; font-size: 13px; }
+        .view-btn:hover { background: #d4af37; color: #0a0a0a; }
+        .cart-btn { margin-top: 10px; display: inline-block; }
+        .quantity-input { width: 60px; padding: 8px; background: rgba(255,255,255,0.1); border: 1px solid #d4af37; border-radius: 5px; color: white; margin-right: 10px; }
+        .no-products { text-align: center; padding: 60px; background: rgba(255,255,255,0.05); border-radius: 15px; }
+        .pagination { text-align: center; margin-top: 50px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .pagination-btn { display: inline-block; padding: 10px 25px; background: transparent; color: #d4af37; text-decoration: none; border-radius: 40px; border: 1.5px solid #d4af37; transition: all 0.3s; font-weight: bold; }
+        .pagination-btn:hover { background: #d4af37; color: #0a0a0a; transform: translateY(-2px); }
+        .pagination-btn.disabled { opacity: 0.5; cursor: not-allowed; }
+        .page-info { color: #d4af37; padding: 10px 20px; }
+        .flash-messages { position: fixed; top: 80px; right: 20px; z-index: 1000; }
+        .flash { padding: 12px 24px; border-radius: 8px; margin-bottom: 10px; }
+        .flash.success { background: #28a745; color: white; }
+        .flash.error { background: #dc3545; color: white; }
+        .back-link { display: inline-block; margin-top: 30px; color: #d4af37; text-decoration: none; }
+        @media (max-width: 768px) { .nav a { padding: 5px 8px; font-size: 10px; } .section-title { font-size: 28px; } .header-content { flex-direction: column; } .nav { justify-content: center; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-circle">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" onerror="this.parentElement.style.display='none'; this.nextElementSibling.style.display='block';">
+                    </div>
+                    <div class="logo-text">
+                        <h1>ELITE SPARKLE</h1>
+                        <p>LUXURY JEWELRY PAKISTAN</p>
+                    </div>
+                </div>
+                <div class="nav">
+                    <a href="/">Home</a>
+                    <a href="/category/rings">💍 Rings</a>
+                    <a href="/category/necklaces">📿 Necklaces</a>
+                    <a href="/category/earrings">✨ Earrings</a>
+                    <a href="/category/bracelets">🔗 Bracelets</a>
+                    <a href="/category/watches">🕐 Watches</a>
+                    <a href="/category/sets">👑 Sets</a>
+                    <a href="/contact">Contact</a>
+                    <a href="/cart" class="cart-icon">🛒 Cart</a>
+                    
+                    {% if session.user_name %}
+                        <div class="profile-dropdown">
+                            <div class="profile-trigger">
+                                <div class="profile-avatar">{{ session.user_name[0]|upper }}</div>
+                                <span class="profile-name">{{ session.user_name.split()[0] }}</span>
+                                <span class="dropdown-arrow">▼</span>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-header">
+                                    <div class="dropdown-avatar">{{ session.user_name[0]|upper }}</div>
+                                    <div class="dropdown-info"><strong>{{ session.user_name }}</strong><small>{{ session.user_email }}</small></div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a href="/my_orders" class="dropdown-item">📦 My Orders</a>
+                                <a href="/profile" class="dropdown-item">👤 My Profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a href="/logout" class="dropdown-item logout">🚪 Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="/login">Login</a>
+                        <a href="/register">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <div class="products-section">
+        <div class="container">
+            <div class="category-badge">
+                {% if category == 'rings' %}💍 RINGS COLLECTION 💍
+                {% elif category == 'necklaces' %}📿 NECKLACES COLLECTION 📿
+                {% elif category == 'earrings' %}✨ EARRINGS COLLECTION ✨
+                {% elif category == 'bracelets' %}🔗 BRACELETS COLLECTION 🔗
+                {% elif category == 'watches' %}🕐 WATCHES COLLECTION 🕐
+                {% elif category == 'pendants' %}💎 PENDANTS COLLECTION 💎
+                {% elif category == 'sets' %}👑 JEWELRY SETS COLLECTION 👑
+                {% else %}{{ category|upper }} COLLECTION{% endif %}
+            </div>
+            
+            <h2 class="section-title">
+                {% if category == 'rings' %}💍 Exquisite Rings
+                {% elif category == 'necklaces' %}📿 Elegant Necklaces
+                {% elif category == 'earrings' %}✨ Sparkling Earrings
+                {% elif category == 'bracelets' %}🔗 Stylish Bracelets
+                {% elif category == 'watches' %}🕐 Luxury Watches
+                {% elif category == 'pendants' %}💎 Beautiful Pendants
+                {% elif category == 'sets' %}👑 Complete Jewelry Sets
+                {% else %}{{ category|capitalize }}
+                {% endif %}
+            </h2>
+            
+            {% if products %}
+            <div class="product-grid">
+                {% for product in products %}
+                <div class="product-card" onclick="location.href='/product/{{ product.id }}'">
+                    <div class="product-image">
+                        {% if product.display_image %}
+                            <img src="{{ url_for('static', filename='product_images/' + product.display_image) }}" alt="{{ product.name }}">
+                        {% elif product.image and product.image != 'default.jpg' %}
+                            <img src="{{ url_for('static', filename='product_images/' + product.image) }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=300" alt="{{ product.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name }}</h3>
+                        <div class="rating">
+                            {% if product.avg_rating > 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if i <= product.avg_rating|round %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                                ({{ product.review_count }})
+                            {% else %}
+                                No reviews yet
+                            {% endif %}
+                        </div>
+                        <div class="product-price">₨ {{ "%.2f"|format(product.price) }}</div>
+                        <form method="POST" action="/add_to_cart/{{ product.id }}" onclick="event.stopPropagation()">
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
+                            <button type="submit" class="view-btn cart-btn">Add to Cart 🛒</button>
+                        </form>
+                        <a href="/product/{{ product.id }}" class="view-btn" style="margin-top: 10px; display: inline-block;">View Details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="{{ url_for('category_view', category=category, page=page-1) }}" class="pagination-btn">← Previous</a>
+                {% else %}
+                    <span class="pagination-btn disabled">← Previous</span>
+                {% endif %}
+                
+                <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+                
+                {% if page < total_pages %}
+                    <a href="{{ url_for('category_view', category=category, page=page+1) }}" class="pagination-btn">Next →</a>
+                {% else %}
+                    <span class="pagination-btn disabled">Next →</span>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            {% else %}
+            <div class="no-products">
+                <h3>No products in {{ category }} yet!</h3>
+                <p>Check back soon for new arrivals.</p>
+                <a href="/" class="view-btn" style="margin-top: 20px;">Continue Shopping</a>
+            </div>
+            {% endif %}
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="/" class="view-btn">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        setTimeout(() => {
+            const flashes = document.querySelectorAll('.flash');
+            flashes.forEach(flash => flash.remove());
+        }, 3000);
+    </script>
+</body>
+</html>

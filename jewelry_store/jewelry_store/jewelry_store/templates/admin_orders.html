@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders Management - Elite Sparkle Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .admin-wrapper { display: flex; min-height: 100vh; }
+        .side-panel { width: 280px; background: linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%); border-right: 1px solid #d4af37; position: fixed; height: 100vh; overflow-y: auto; }
+        .side-panel-header { padding: 25px 20px; border-bottom: 1px solid #d4af37; text-align: center; }
+        .side-panel-header h2 { color: #d4af37; }
+        .side-menu { padding: 20px 0; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 20px; color: #fff; text-decoration: none; transition: all 0.3s; border-left: 3px solid transparent; }
+        .menu-item:hover { background: rgba(212,175,55,0.1); border-left-color: #d4af37; }
+        .menu-item.active { background: rgba(212,175,55,0.15); border-left-color: #d4af37; color: #d4af37; }
+        .submenu { padding-left: 45px; }
+        .submenu-item { display: block; padding: 8px 15px; color: #ccc; text-decoration: none; font-size: 13px; }
+        .submenu-item:hover { color: #d4af37; }
+        .main-content { flex: 1; margin-left: 280px; padding: 20px; }
+        .admin-header { background: #1a1a1a; padding: 15px 25px; border-bottom: 1px solid #d4af37; display: flex; justify-content: space-between; margin-bottom: 20px; border-radius: 10px; flex-wrap: wrap; gap: 15px; }
+        .search-box { display: flex; gap: 10px; align-items: center; }
+        .search-box input { padding: 8px 15px; background: rgba(255,255,255,0.1); border: 1px solid #d4af37; border-radius: 40px; color: white; width: 250px; outline: none; }
+        .search-box input:focus { border-color: #ffd700; }
+        .search-box button { padding: 8px 20px; background: #d4af37; color: #0a0a0a; border: none; border-radius: 40px; cursor: pointer; font-weight: bold; }
+        .search-box button:hover { background: #ffd700; }
+        .stats-row { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stat-box { background: rgba(255,255,255,0.05); padding: 15px 25px; border-radius: 10px; text-align: center; border: 1px solid #d4af37; flex: 1; min-width: 120px; }
+        .stat-box h3 { color: #d4af37; font-size: 28px; }
+        .stat-box p { font-size: 12px; color: #888; }
+        .section { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; overflow-x: auto; }
+        .section h2 { color: #d4af37; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(212,175,55,0.3); }
+        th { background: #d4af37; color: #0a0a0a; }
+        .btn { padding: 5px 12px; background: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 5px; font-size: 11px; display: inline-block; margin: 2px; }
+        .btn-danger { background: #dc3545; color: white; }
+        .status { padding: 3px 8px; border-radius: 20px; font-size: 11px; }
+        .status.pending { background: #ffc107; color: #0a0a0a; }
+        .status.shipped { background: #17a2b8; color: white; }
+        .status.delivered { background: #28a745; color: white; }
+        .status.cancelled { background: #dc3545; color: white; }
+        .filter-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-btn { padding: 8px 20px; background: rgba(255,255,255,0.1); border: 1px solid #d4af37; border-radius: 30px; color: white; text-decoration: none; font-size: 13px; }
+        .filter-btn.active { background: #d4af37; color: #0a0a0a; }
+        .filter-btn:hover { background: #d4af37; color: #0a0a0a; }
+        .search-result-info { margin-bottom: 15px; padding: 10px; background: rgba(212,175,55,0.1); border-radius: 8px; display: inline-block; }
+        .clear-search { color: #d4af37; text-decoration: none; margin-left: 10px; }
+        .clear-search:hover { text-decoration: underline; }
+        @media (max-width: 768px) { .side-panel { width: 70px; } .side-panel-header h2, .menu-item span:last-child { display: none; } .main-content { margin-left: 70px; } .search-box { width: 100%; } .search-box input { flex: 1; } }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <div class="side-panel">
+            <div class="side-panel-header"><h2>✨ Elite Sparkle</h2></div>
+            <div class="side-menu">
+                <a href="/admin/dashboard" class="menu-item"><span>📊</span><span>Dashboard</span></a>
+                <a href="/admin/products" class="menu-item"><span>🛍️</span><span>Products</span></a>
+                <div class="menu-item active"><span>📦</span><span>Orders</span></div>
+                <div class="submenu">
+                    <a href="/admin/orders" class="submenu-item">📋 All Orders</a>
+                    <a href="/admin/orders/pending" class="submenu-item">⏳ Pending</a>
+                    <a href="/admin/orders/shipped" class="submenu-item">🚚 Shipped</a>
+                    <a href="/admin/orders/delivered" class="submenu-item">✅ Delivered</a>
+                    <a href="/admin/orders/cancelled" class="submenu-item">❌ Cancelled</a>
+                    <a href="/admin/search_order" class="submenu-item">🔍 Advanced Search</a>
+                </div>
+                <a href="/admin/users" class="menu-item"><span>👥</span><span>Users</span></a>
+                <a href="/admin/reviews" class="menu-item"><span>⭐</span><span>Reviews</span></a>
+                <a href="/admin/notifications" class="menu-item"><span>🔔</span><span>Notifications</span></a>
+                <a href="/" class="menu-item"><span>🏠</span><span>View Store</span></a>
+                <a href="/admin/logout" class="menu-item"><span>🚪</span><span>Logout</span></a>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="admin-header">
+                <h1>📦 Orders Management</h1>
+                <div class="search-box">
+                    <form method="GET" action="/admin/orders" style="display: flex; gap: 10px;">
+                        <input type="text" name="search" placeholder="🔍 Search by Order Number..." value="{{ request.args.get('search', '') }}">
+                        <button type="submit">Search</button>
+                        {% if request.args.get('search') %}
+                            <a href="/admin/orders" class="clear-search">Clear</a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-box"><h3>{{ orders|length }}</h3><p>Total Orders</p></div>
+                <div class="stat-box"><h3>{{ orders|selectattr('status', 'equalto', 'pending')|list|length }}</h3><p>Pending</p></div>
+                <div class="stat-box"><h3>{{ orders|selectattr('status', 'equalto', 'shipped')|list|length }}</h3><p>Shipped</p></div>
+                <div class="stat-box"><h3>{{ orders|selectattr('status', 'equalto', 'delivered')|list|length }}</h3><p>Delivered</p></div>
+                <div class="stat-box"><h3>₨ {{ orders|sum(attribute='total_amount')|round(2) }}</h3><p>Total Revenue</p></div>
+            </div>
+            
+            <!-- Filter Buttons -->
+            <div class="filter-buttons">
+                <a href="/admin/orders" class="filter-btn {% if not current_status %}active{% endif %}">All Orders</a>
+                <a href="/admin/orders/pending" class="filter-btn {% if current_status == 'pending' %}active{% endif %}">⏳ Pending</a>
+                <a href="/admin/orders/shipped" class="filter-btn {% if current_status == 'shipped' %}active{% endif %}">🚚 Shipped</a>
+                <a href="/admin/orders/delivered" class="filter-btn {% if current_status == 'delivered' %}active{% endif %}">✅ Delivered</a>
+                <a href="/admin/orders/cancelled" class="filter-btn {% if current_status == 'cancelled' %}active{% endif %}">❌ Cancelled</a>
+            </div>
+            
+            <!-- Search Result Info -->
+            {% if request.args.get('search') %}
+            <div class="search-result-info">
+                🔍 Search results for: <strong>"{{ request.args.get('search') }}"</strong> | Found: {{ orders|length }} order(s)
+            </div>
+            {% endif %}
+            
+            <div class="section">
+                {% if orders %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th>City</th>
+                            <th>Subtotal</th>
+                            <th>Delivery</th>
+                            <th>Total</th>
+                            <th>Payment</th>
+                            <th>Payment Status</th>
+                            <th>Order Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td><strong>{{ order.order_number }}</strong></small></td>
+                            <td>{{ order.first_name }} {{ order.last_name }}<br><small>{{ order.email }}</small></small></td>
+                            <td>{{ order.phone }}</small></td>
+                            <td>{{ order.city }}</small></td>
+                            <td>₨ {{ "%.2f"|format(order.subtotal or 0) }}</small></td>
+                            <td>₨ {{ "%.2f"|format(order.delivery_charge or 0) }}</small></td>
+                            <td><strong>₨ {{ "%.2f"|format(order.total_amount) }}</strong></small></td>
+                            <td>{{ order.payment_method|capitalize }}</small></td>
+                            <td>
+                                {% if order.payment_method == 'cod' %}
+                                    <span class="status" style="background: #17a2b8;">💰 COD</span>
+                                {% elif order.payment_status == 'confirmed' %}
+                                    <span class="status" style="background: #28a745;">✅ Confirmed</span>
+                                {% else %}
+                                    <span class="status" style="background: #ffc107; color:#000;">⏳ Pending</span>
+                                {% endif %}
+                            </small></td>
+                            <td>
+                                <form method="POST" action="/admin/update_order_status/{{ order.id }}" style="display: inline;">
+                                    <select name="status" onchange="this.form.submit()" style="padding: 3px;">
+                                        <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                        <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                                        <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                        <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                    </select>
+                                </form>
+                            </small></td>
+                            <td>{{ order.created_at[:10] }}</small></td>
+                            <td class="action-buttons">
+                                <a href="/admin/view_order/{{ order.id }}" class="btn">📋 View</a>
+                                {% if order.payment_method != 'cod' and order.payment_status == 'pending' and order.receipt_image %}
+                                    <a href="/admin/confirm_payment/{{ order.id }}" class="btn" style="background: #28a745;" onclick="return confirm('Confirm payment?')">✅ Confirm</a>
+                                {% endif %}
+                                {% if order.status == 'delivered' %}
+                                    <a href="/admin/delete_order/{{ order.id }}" class="btn btn-danger" onclick="return confirm('Delete this order?')">🗑️ Delete</a>
+                                {% endif %}
+                            </small></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="no-data" style="text-align: center; padding: 40px;">
+                    <p>📭 No orders found.</p>
+                    {% if request.args.get('search') %}
+                        <p>Try searching with a different order number.</p>
+                        <a href="/admin/orders" class="btn" style="margin-top: 15px;">View All Orders</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile - Elite Sparkle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0a; color: white; }
+        .header { background: #1a1a1a; padding: 20px; border-bottom: 1px solid #d4af37; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .profile-card { background: rgba(255,255,255,0.05); border-radius: 20px; padding: 30px; border: 1px solid #d4af37; margin-bottom: 30px; }
+        .profile-header { display: flex; align-items: center; gap: 30px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(212,175,55,0.3); flex-wrap: wrap; }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #d4af37, #ffd700); display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: #0a0a0a; }
+        .profile-info h2 { color: #d4af37; margin-bottom: 5px; }
+        .profile-info p { color: #888; }
+        .info-section { margin-top: 20px; }
+        .info-row { display: flex; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; align-items: center; }
+        .info-label { width: 150px; color: #d4af37; font-weight: bold; }
+        .info-value { flex: 1; color: #ccc; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .password-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        .password-dots {
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: #ccc;
+            background: rgba(255,255,255,0.05);
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(212,175,55,0.3);
+        }
+        .password-text {
+            display: none;
+            font-family: monospace;
+            font-size: 14px;
+            color: #ccc;
+            background: rgba(255,255,255,0.05);
+            padding: 5px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(212,175,55,0.3);
+            word-break: break-all;
+        }
+        .password-text.show {
+            display: block;
+        }
+        .password-dots.hide {
+            display: none;
+        }
+        .toggle-password-view {
+            background: none;
+            border: none;
+            color: #d4af37;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .toggle-password-view:hover {
+            background: rgba(212,175,55,0.2);
+            transform: scale(1.05);
+        }
+        .btn { display: inline-block; padding: 10px 25px; background: #d4af37; color: #0a0a0a; text-decoration: none; border-radius: 40px; margin-top: 20px; border: none; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-secondary { background: transparent; border: 1.5px solid #d4af37; color: #d4af37; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #d4af37; font-weight: bold; }
+        input { width: 100%; padding: 12px; background: rgba(255,255,255,0.1); border: 1px solid #d4af37; border-radius: 8px; color: white; font-size: 16px; }
+        input:focus { outline: none; border-color: #f9e07e; }
+        .edit-form { display: none; margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(212,175,55,0.3); }
+        .edit-form.active { display: block; }
+        .flash { padding: 12px 24px; border-radius: 8px; margin-bottom: 20px; }
+        .flash.success { background: #28a745; color: white; }
+        .flash.error { background: #dc3545; color: white; }
+        .password-field-wrapper { position: relative; }
+        .toggle-password { 
+            position: absolute; 
+            right: 12px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: none; 
+            border: none; 
+            color: #d4af37; 
+            cursor: pointer; 
+            font-size: 18px;
+            padding: 5px;
+            transition: all 0.3s;
+        }
+        .toggle-password:hover {
+            color: #ffd700;
+            transform: translateY(-50%) scale(1.1);
+        }
+        @media (max-width: 768px) { 
+            .profile-header { flex-direction: column; text-align: center; } 
+            .info-row { flex-direction: column; gap: 8px; } 
+            .info-label { width: 100%; } 
+            .info-value { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container" style="text-align: left;">
+            <a href="/" style="color: #d4af37; text-decoration: none;">← Back to Store</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+        
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">{{ session.user_name[0]|upper if session.user_name else 'U' }}</div>
+                <div class="profile-info">
+                    <h2>{{ session.user_name }}</h2>
+                    <p>{{ session.user_email }}</p>
+                    <p>Member since {{ user.created_at[:10] if user.created_at else '2024' }}</p>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3 style="color: #d4af37; margin-bottom: 20px;">Account Information</h3>
+                <div class="info-row">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value">{{ user.email }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Phone Number</div>
+                    <div class="info-value">{{ user.phone }}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Password</div>
+                    <div class="info-value">
+                        <div class="password-display">
+                            <span class="password-dots" id="passwordDots">••••••••</span>
+                            <span class="password-text" id="passwordText">[Hidden for security]</span>
+                            <button class="toggle-password-view" onclick="togglePasswordView()" title="Show/Hide Password">
+                                👁️
+                            </button>
+                        </div>
+                        <button onclick="toggleEditForm('passwordForm')" class="btn-secondary" style="padding: 5px 15px;">Change Password</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <button onclick="toggleEditForm('profileForm')" class="btn">✏️ Edit Profile</button>
+                <a href="/my_orders" class="btn btn-secondary">📦 My Orders</a>
+                <a href="/logout" class="btn btn-danger">🚪 Logout</a>
+            </div>
+            
+            <!-- Edit Profile Form -->
+            <div id="profileForm" class="edit-form">
+                <h3 style="color: #d4af37; margin-bottom: 20px;">Edit Profile Information</h3>
+                <form method="POST">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="last_name" value="{{ user.last_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" name="phone" value="{{ user.phone }}" required>
+                    </div>
+                    <button type="submit" class="btn">Save Changes</button>
+                    <button type="button" onclick="toggleEditForm('profileForm')" class="btn btn-secondary">Cancel</button>
+                </form>
+            </div>
+            
+            <!-- Change Password Form -->
+            <div id="passwordForm" class="edit-form">
+                <h3 style="color: #d4af37; margin-bottom: 20px;">Change Password</h3>
+                <form method="POST" action="/update_password">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <div class="password-field-wrapper">
+                            <input type="password" name="current_password" id="currentPassword" required>
+                            <button type="button" class="toggle-password" onclick="togglePasswordField('currentPassword')">👁️</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <div class="password-field-wrapper">
+                            <input type="password" name="new_password" id="newPassword" required minlength="6">
+                            <button type="button" class="toggle-password" onclick="togglePasswordField('newPassword')">👁️</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <div class="password-field-wrapper">
+                            <input type="password" name="confirm_password" id="confirmPassword" required>
+                            <button type="button" class="toggle-password" onclick="togglePasswordField('confirmPassword')">👁️</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Update Password</button>
+                    <button type="button" onclick="toggleEditForm('passwordForm')" class="btn btn-secondary">Cancel</button>
+                </form>
+                <p style="margin-top: 15px; font-size: 12px; color: #888;">Password must be at least 6 characters long.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let isPasswordVisible = false;
+        
+        function togglePasswordView() {
+            const passwordDots = document.getElementById('passwordDots');
+            const passwordText = document.getElementById('passwordText');
+            
+            if (!isPasswordVisible) {
+                // Try to fetch actual password? No - for security, we don't store plain text
+                // Just show a message that it's hidden for security
+                passwordDots.classList.add('hide');
+                passwordText.classList.add('show');
+                passwordText.textContent = '•••••••• (hidden for security)';
+                event.target.textContent = '🙈';
+                isPasswordVisible = true;
+            } else {
+                passwordDots.classList.remove('hide');
+                passwordText.classList.remove('show');
+                event.target.textContent = '👁️';
+                isPasswordVisible = false;
+            }
+        }
+        
+        function toggleEditForm(formId) {
+            const form = document.getElementById(formId);
+            form.classList.toggle('active');
+            // Close other form if open
+            if (formId === 'profileForm') {
+                document.getElementById('passwordForm').classList.remove('active');
+            } else {
+                document.getElementById('profileForm').classList.remove('active');
+            }
+        }
+        
+        function togglePasswordField(fieldId) {
+            const input = document.getElementById(fieldId);
+            const button = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+        
+        setTimeout(() => {
+            const flashes = document.querySelectorAll('.flash');
+            flashes.forEach(flash => {
+                setTimeout(() => flash.remove(), 3000);
+            });
+        }, 100);
+    </script>
+</body>
+</html>
